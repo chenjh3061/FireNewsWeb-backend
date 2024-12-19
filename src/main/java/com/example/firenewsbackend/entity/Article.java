@@ -9,7 +9,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("news")
+@TableName("article")
 public class Article {
 
     @TableId(type = IdType.ASSIGN_ID)
@@ -27,7 +27,7 @@ public class Article {
 
     private String reviewMessage;
 
-    private String content;
+    private String articleContent;
 
     private LocalDateTime  createTime;
 

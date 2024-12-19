@@ -27,7 +27,7 @@ public class User {
 
     private String userProfile; // 用户简介
 
-    private String role; // "user" / "admin" / "writer" / "ban"
+    private String userRole; // "user" / "admin" / "writer" / "ban"
 
     private String email; // 邮箱
 
@@ -36,6 +36,6 @@ public class User {
     private LocalDateTime  updateTime;
 
     @TableLogic
-    private Integer isDeleted;
+    private Integer isDelete;
 
 }
