@@ -1,8 +1,8 @@
 package com.example.firenewsbackend.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.firenewsbackend.entity.Comments;
+import org.springframework.stereotype.Service;
 
-public interface CommentService extends IService<Comments> {
+@Service
+public class CommentService{
 
 }

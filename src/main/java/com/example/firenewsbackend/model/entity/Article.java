@@ -1,4 +1,4 @@
-package com.example.firenewsbackend.entity;
+package com.example.firenewsbackend.model.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -27,11 +27,15 @@ public class Article {
 
     private String reviewMessage;
 
+    private String authorId; // 作者Id
+
     private String articleContent;
 
     private LocalDateTime  createTime;
 
     private LocalDateTime  updateTime;
+
+    private Integer isCarousel;
 
     @TableLogic
     private Integer isDelete;

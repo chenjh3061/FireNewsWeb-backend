@@ -1,4 +1,4 @@
-package com.example.firenewsbackend.entity;
+package com.example.firenewsbackend.model.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
