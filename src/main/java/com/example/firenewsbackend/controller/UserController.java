@@ -1,13 +1,12 @@
 package com.example.firenewsbackend.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.firenewsbackend.common.BaseResponse;
 import com.example.firenewsbackend.common.ResultUtils;
 import com.example.firenewsbackend.model.entity.User;
 import com.example.firenewsbackend.service.UserService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +29,7 @@ public class UserController {
     }
 
     /**
-     * 获取用户
+     * 获取特定用户
      * @return User
      */
     @GetMapping("/getUserById")
@@ -38,6 +37,35 @@ public class UserController {
         return ResultUtils.success(userService.getUserById(id));
     }
 
+    /**
+     * 账号搜索用户
+     * @return User
+     */
+    @GetMapping("/getUserByAccount")
+    public BaseResponse<List<User>> getUserByAccount(String userAccount){
+        return ResultUtils.success(userService.getUserByAccount(userAccount));
+    }
+
+    /**
+     * 分页获取用户
+     * @return User
+     */
+    @GetMapping("/getUsersByPage")
+    public BaseResponse<Page<User>> getUsersByPage(
+            @RequestParam int pageNo,
+            @RequestParam int pageSize){
+        Page<User> usersPage = userService.getUsersPage(pageNo, pageSize);
+        return ResultUtils.success(usersPage);
+    }
+
+    /**
+     * 获取当前登录用户
+     * @return User
+     */
+    @GetMapping("/getLoginUser")
+    public BaseResponse<User> getLoginUser(HttpServletRequest request){
+        return ResultUtils.success(userService.getLoginUser(request));
+    }
 
     /**
      * 用户注册
@@ -67,5 +95,37 @@ public class UserController {
     @GetMapping("/getCurrentUser")
     public BaseResponse<User> getCurrentUser(HttpServletRequest request){
         return ResultUtils.success(userService.getLoginUser(request));
+    }
+
+    /**
+     * 更新用户
+     * @return User
+     */
+    @PostMapping("/updateUser")
+    public ResponseEntity<User> updateUser(@RequestBody User user) {
+        if (user.getId() == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        // 确保 id 是数字类型
+        try {
+            user.setId(Long.parseLong(user.getId().toString())); // 或者 Integer.parseInt()
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        userService.updateUser(user);
+        return ResponseEntity.ok(user);
+    }
+
+
+    /**
+     * 删除用户
+     * @param id
+     * @return User
+     */
+    @PostMapping("/deleteUser")
+    public BaseResponse<User> deleteUser(Integer id){
+        return ResultUtils.success(userService.deleteUser(id));
     }
 }

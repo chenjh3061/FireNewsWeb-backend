@@ -1,6 +1,7 @@
 package com.example.firenewsbackend.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.firenewsbackend.model.entity.User;
 import com.example.firenewsbackend.mapper.UserMapper;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ public class UserService {
     public User getUserById(Integer id) {
         return userMapper.selectOne(new QueryWrapper<User>().eq("id", id));
     }
+
 
     /**
      * 用户注册
@@ -86,4 +88,43 @@ public class UserService {
         return userMapper.selectOne(new QueryWrapper<User>().eq("userAccount", request.getHeader("userAccount")));
     }
 
+
+    /**
+     * 更新用户
+     * @return User
+     */
+    public User updateUser(User user){
+        userMapper.updateById(user);
+        return user;
+    }
+
+    /**
+     * 删除用户
+     * @param id
+     * @return User
+     */
+    public User deleteUser(Integer id){
+        // 假设 User 表有一个名为 isDelete 的字段，值为 1 表示删除
+        User user = userMapper.selectById(id); // 获取用户信息
+        if (user != null) {
+            user.setIsDelete(1); // 设置 isDelete 字段为 1，表示已删除
+            userMapper.updateById(user); // 执行更新
+        }
+        return user;
+    }
+
+    /**
+     * 搜索用户
+     * @return User
+     */
+    public List<User> getUserByAccount(String userAccount) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like("userAccount", userAccount);
+        return userMapper.selectList(queryWrapper);
+    }
+
+    public Page<User> getUsersPage(int pageNo, int pageSize) {
+        Page<User> page = new Page<>(pageNo, pageSize);
+        return userMapper.selectPage(page, null);
+    }
 }

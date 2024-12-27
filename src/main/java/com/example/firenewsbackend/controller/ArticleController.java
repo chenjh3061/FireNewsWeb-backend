@@ -1,15 +1,13 @@
 package com.example.firenewsbackend.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.firenewsbackend.common.BaseResponse;
 import com.example.firenewsbackend.common.ResultUtils;
 import com.example.firenewsbackend.model.dto.ArticleDTO;
 import com.example.firenewsbackend.model.entity.Article;
 import com.example.firenewsbackend.service.ArticleService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -37,6 +35,40 @@ public class ArticleController {
     @GetMapping("/getArticleById")
     public BaseResponse<ArticleDTO> getArticleById(Integer id){
         return ResultUtils.success(articleService.getArticleById(id));
+    }
+
+    /**
+     * 分页获取文章
+     * @return Article
+     */
+    @GetMapping("/getArticlesByPage")
+    public BaseResponse<Page<ArticleDTO>> getArticlesByPage(
+            @RequestParam int pageNo,
+            @RequestParam int pageSize){
+        Page<ArticleDTO> articlesPage = articleService.getArticlesPage(pageNo, pageSize);
+        return ResultUtils.success(articlesPage);
+    }
+
+    /**
+     * 分页获取热点新闻
+     * @return Article
+     */
+    @GetMapping("/getHotNewsByPage")
+    public BaseResponse<Page<ArticleDTO>> getHotNewsByPage(
+            @RequestParam int pageNo,
+            @RequestParam int pageSize){
+        Page<ArticleDTO> articlesPage = articleService.getHotNewsByPage(pageNo, pageSize);
+        return ResultUtils.success(articlesPage);
+    }
+
+
+    /**
+     * 获取作者文章
+     * @return Article
+     */
+    @GetMapping("/getArticlesByAuthorId")
+    public BaseResponse<List<ArticleDTO>> getArticlesByAuthorId(Integer id){
+        return ResultUtils.success(articleService.getArticlesByAuthorId(id));
     }
 
     /**

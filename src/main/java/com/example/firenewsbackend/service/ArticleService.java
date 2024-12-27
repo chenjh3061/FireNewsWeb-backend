@@ -1,6 +1,7 @@
 package com.example.firenewsbackend.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.firenewsbackend.model.dto.ArticleDTO;
 import com.example.firenewsbackend.model.entity.Article;
 import com.example.firenewsbackend.mapper.ArticleMapper;
@@ -31,6 +32,14 @@ public class ArticleService {
         return articleMapper.getArticleById(Long.valueOf(id));
     }
 
+    /**
+     * 分页查询文章
+     * @return Article
+     */
+    public Page<ArticleDTO> getArticlesPage(Integer pageNo, Integer pageSize){
+        Page<ArticleDTO> page = new Page<>(pageNo, pageSize);
+        return articleMapper.selectArticlesPage(page);
+    }
     /**
      * 获取热点新闻
      * @return Article
@@ -90,4 +99,12 @@ public class ArticleService {
     }
 
 
+    public List<ArticleDTO> getArticlesByAuthorId(Integer id) {
+        return articleMapper.getArticlesByAuthorId(id);
+    }
+
+    public Page<ArticleDTO> getHotNewsByPage(int pageNo, int pageSize) {
+        Page<ArticleDTO> page = new Page<>(pageNo, pageSize);
+        return articleMapper.getHotNewsByPage(page);
+    }
 }

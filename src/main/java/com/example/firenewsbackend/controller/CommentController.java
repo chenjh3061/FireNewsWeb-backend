@@ -1,11 +1,15 @@
 package com.example.firenewsbackend.controller;
 
+import com.example.firenewsbackend.common.BaseResponse;
+import com.example.firenewsbackend.common.ResultUtils;
+import com.example.firenewsbackend.model.entity.Comments;
 import com.example.firenewsbackend.service.CommentService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @RestController
 @RequestMapping("/comments")
@@ -15,12 +19,15 @@ public class CommentController {
 
     /**
      * 获取评论数据
-     * 1. 根据文章id获取评论
-     * 2. 根据评论id获取子评论
-     * 3. 根据评论id获取评论者信息
+     * @return Comments
      */
-    @GetMapping("/getComments")
-    public void getComments(){
+    @GetMapping("/getAllComments")
+    public BaseResponse<List<Comments>> getComments(){
+        return ResultUtils.success(commentService.getAllComments());
+    }
 
+    @GetMapping("/getCommentsByArticleId")
+    public BaseResponse<List<Comments>> getCommentsByArticleId(Integer id){
+        return ResultUtils.success(commentService.getAllCommentsByArticleId(id));
     }
 }

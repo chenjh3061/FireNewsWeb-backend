@@ -19,6 +19,8 @@ spring:
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: false
+    plugins:
+      - com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor
     # 仅在开发环境开启日志
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
@@ -39,5 +41,7 @@ knife4j:
         api-rule-resources:
           - com.example.firenewsbackend.controller
 
-
+# 智谱ai配置
+ai:
+  apiKey: cd3e9fa7f67988e4c4a87e6adaad7d4f.tXpGrIlHvyIoqIlL
 
