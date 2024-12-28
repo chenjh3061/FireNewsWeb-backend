@@ -76,15 +76,15 @@ public class ArticleController {
      * @return Article
      */
     @GetMapping("/getHotNews")
-    public ResponseEntity<List<ArticleDTO>> getHotNewsArticles() {
+    public BaseResponse<List<ArticleDTO>> getHotNewsArticles() {
         List<ArticleDTO> hotNewsArticles = articleService.getHotNewsArticles();
-        return ResponseEntity.ok(hotNewsArticles);
+        return ResultUtils.success(hotNewsArticles);
     }
 
     @GetMapping("/getHotScience")
-    public ResponseEntity<List<ArticleDTO>> getHotScienceArticles() {
+    public BaseResponse<List<ArticleDTO>> getHotScienceArticles() {
         List<ArticleDTO> hotScienceArticles = articleService.getHotScienceArticles();
-        return ResponseEntity.ok(hotScienceArticles);
+        return ResultUtils.success(hotScienceArticles);
     }
 
     /**
