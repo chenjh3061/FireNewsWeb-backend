@@ -5,6 +5,7 @@ import com.example.firenewsbackend.common.ResultUtils;
 import com.example.firenewsbackend.model.entity.Comments;
 import com.example.firenewsbackend.service.CommentService;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,5 +30,10 @@ public class CommentController {
     @GetMapping("/getCommentsByArticleId")
     public BaseResponse<List<Comments>> getCommentsByArticleId(Integer id){
         return ResultUtils.success(commentService.getAllCommentsByArticleId(id));
+    }
+
+    @PostMapping("/addComment")
+    public BaseResponse<Comments> addComment(Comments comment){
+        return commentService.addComment(comment);
     }
 }

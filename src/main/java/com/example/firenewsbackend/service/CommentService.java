@@ -1,6 +1,7 @@
 package com.example.firenewsbackend.service;
 
 import com.example.firenewsbackend.common.BaseResponse;
+import com.example.firenewsbackend.common.ResultUtils;
 import com.example.firenewsbackend.mapper.CommentMapper;
 import com.example.firenewsbackend.model.entity.Comments;
 import org.springframework.stereotype.Service;
@@ -20,5 +21,10 @@ public class CommentService{
 
     public List<Comments> getAllCommentsByArticleId(Integer id) {
         return commentMapper.getAllCommentsByArticleId(id);
+    }
+
+    public BaseResponse<Comments> addComment(Comments comment) {
+        commentMapper.insert(comment);
+        return null;
     }
 }

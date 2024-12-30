@@ -80,10 +80,11 @@ public class ArticleService {
 
     /**
      * 更新文章
+     *
      * @param article
      * @return Article
      */
-    public Article updateArticle(Article article){
+    public ArticleDTO updateArticle(ArticleDTO article){
         articleMapper.updateById(article);
         return article;
     }

@@ -1,11 +1,13 @@
 package com.example.firenewsbackend.model.dto;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
 public class ArticleDTO {
+    @TableField("id")
     private Long articleId;
     private String articleTitle;
     private String articleDesc;
@@ -23,4 +25,7 @@ public class ArticleDTO {
     private String authorName;
     private String authorAvatar;
 
+    public void setIsCarousel(int i) {
+        this.articleCategory = i;
+    }
 }

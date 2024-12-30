@@ -2,6 +2,7 @@ package com.example.firenewsbackend.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.firenewsbackend.common.BaseResponse;
+import com.example.firenewsbackend.common.ErrorCode;
 import com.example.firenewsbackend.common.ResultUtils;
 import com.example.firenewsbackend.model.dto.ArticleDTO;
 import com.example.firenewsbackend.model.entity.Article;
@@ -97,6 +98,58 @@ public class ArticleController {
     }
 
     /**
+     * 设置轮播新闻
+     * @param id 文章ID
+     * @return 更新后的文章
+     */
+    @PostMapping("/setCarouselArticles")
+    public BaseResponse<ArticleDTO> setCarouselArticles(@RequestParam Integer id) {
+        // 获取文章信息
+        ArticleDTO article = articleService.getArticleById(id);
+
+        // 判断文章是否存在
+        if (article == null) {
+            ResultUtils.error(ErrorCode.NOT_FOUND_ERROR.getCode(),"文章未找到");
+        }
+
+        // 设置轮播新闻标识
+        article.setIsCarousel(1);  // 设置为轮播新闻
+
+        // 更新数据库
+        articleService.updateArticle(article);  // 调用文章服务的更新方法
+
+        // 返回更新后的文章
+        return ResultUtils.success(article);
+    }
+
+
+    /**
+     * 取消轮播新闻
+     * @param id 文章ID
+     * @return 更新后的文章
+     */
+    @PostMapping("/cancelCarouselArticles")
+    public BaseResponse<ArticleDTO> cancelCarouselArticles(@RequestParam Integer id) {
+        // 获取文章信息
+        ArticleDTO article = articleService.getArticleById(id);
+
+        if (article == null) {
+            // 文章不存在，返回 404 错误
+            ResultUtils.error(ErrorCode.NOT_FOUND_ERROR.getCode(),"文章未找到");
+        }
+
+        // 取消轮播新闻标识
+        article.setIsCarousel(0);  // 设置为非轮播新闻
+
+        // 更新数据库
+        articleService.updateArticle(article);  // 调用文章服务的更新方法
+
+        // 返回更新后的文章
+        return ResultUtils.success(article);
+    }
+
+
+    /**
      * 新增文章
      * @param article
      * @return Article
@@ -108,12 +161,12 @@ public class ArticleController {
 
     /**
      * 更新文章
-     * @param article
      * @return Article
      */
     @PostMapping("/updateArticle")
-    public BaseResponse<Article> updateArticle(Article article){
-        return ResultUtils.success(articleService.updateArticle(article));
+    public BaseResponse<ArticleDTO> updateArticle(@RequestBody ArticleDTO articleDTO){
+        System.out.println(articleDTO);
+        return ResultUtils.success(articleService.updateArticle(articleDTO));
     }
 
 }

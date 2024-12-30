@@ -6,6 +6,7 @@ import com.example.firenewsbackend.model.dto.ArticleDTO;
 import com.example.firenewsbackend.model.entity.Article;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -147,4 +148,18 @@ public interface ArticleMapper extends BaseMapper<Article> {
             "ORDER BY a.viewCount DESC " +
             "LIMIT #{pageSize}")
     Page<ArticleDTO> getHotNewsByPage(Page<ArticleDTO> page);
+
+    // 更新文章
+    @Update("UPDATE article SET " +
+            "articleTitle = #{articleTitle}, " +
+            "articleDesc = #{articleDesc}, " +
+            "articleAvatar = #{articleAvatar}, " +
+            "articleCategory = #{articleCategory}, " +
+            "articleContent = #{articleContent}, " +
+            "reviewStatus = #{reviewStatus}, " +
+            "reviewMessage = #{reviewMessage}, " +
+            "updateTime = #{updateTime}, " +
+            "authorId = #{authorId} " +
+            "WHERE id = #{articleId} AND isDelete = 0")
+    void updateById(ArticleDTO article);
 }
