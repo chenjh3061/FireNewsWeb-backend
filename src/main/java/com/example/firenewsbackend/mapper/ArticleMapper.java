@@ -20,6 +20,7 @@ public interface ArticleMapper extends BaseMapper<Article> {
             "a.articleCategory AS articleCategory, " +
             "a.articleContent AS articleContent, " +
             "a.viewCount AS viewCount, " +
+            "a.isCarousel AS isCarousel, " +
             "a.reviewStatus AS reviewStatus, " +
             "a.reviewMessage AS reviewMessage, " +
             "a.createTime AS createTime, " +
@@ -41,6 +42,7 @@ public interface ArticleMapper extends BaseMapper<Article> {
             "a.articleCategory AS articleCategory, " +
             "a.articleContent AS articleContent, " +
             "a.viewCount AS viewCount, " +
+            "a.isCarousel AS isCarousel, " +
             "a.reviewStatus AS reviewStatus, " +
             "a.reviewMessage AS reviewMessage, " +
             "a.createTime AS createTime, " +
@@ -63,6 +65,7 @@ public interface ArticleMapper extends BaseMapper<Article> {
             "a.articleCategory AS articleCategory, " +
             "a.articleContent AS articleContent, " +
             "a.viewCount AS viewCount, " +
+            "a.isCarousel AS isCarousel, " +
             "a.reviewStatus AS reviewStatus, " +
             "a.reviewMessage AS reviewMessage, " +
             "a.createTime AS createTime, " +
@@ -110,6 +113,7 @@ public interface ArticleMapper extends BaseMapper<Article> {
             "a.articleCategory AS articleCategory, " +
             "a.articleContent AS articleContent, " +
             "a.viewCount AS viewCount, " +
+            "a.isCarousel AS isCarousel, " +
             "a.reviewStatus AS reviewStatus, " +
             "a.reviewMessage AS reviewMessage, " +
             "a.createTime AS createTime, " +
@@ -156,6 +160,7 @@ public interface ArticleMapper extends BaseMapper<Article> {
             "articleAvatar = #{articleAvatar}, " +
             "articleCategory = #{articleCategory}, " +
             "articleContent = #{articleContent}, " +
+            "isCarousel = #{isCarousel}, " +
             "reviewStatus = #{reviewStatus}, " +
             "reviewMessage = #{reviewMessage}, " +
             "updateTime = #{updateTime}, " +

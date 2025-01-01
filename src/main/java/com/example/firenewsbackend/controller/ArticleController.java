@@ -35,7 +35,7 @@ public class ArticleController {
      */
     @GetMapping("/getArticleById")
     public BaseResponse<ArticleDTO> getArticleById(Integer id){
-        return ResultUtils.success(articleService.getArticleById(id));
+        return ResultUtils.success(articleService.getArticleById(Long.valueOf(id)));
     }
 
     /**
@@ -103,7 +103,7 @@ public class ArticleController {
      * @return 更新后的文章
      */
     @PostMapping("/setCarouselArticles")
-    public BaseResponse<ArticleDTO> setCarouselArticles(@RequestParam Integer id) {
+    public BaseResponse<ArticleDTO> setCarouselArticles(@RequestParam Long id) {
         // 获取文章信息
         ArticleDTO article = articleService.getArticleById(id);
 
@@ -113,7 +113,9 @@ public class ArticleController {
         }
 
         // 设置轮播新闻标识
-        article.setIsCarousel(1);  // 设置为轮播新闻
+        if (article != null) {
+            article.setIsCarousel(1);  // 设置为轮播新闻
+        }
 
         // 更新数据库
         articleService.updateArticle(article);  // 调用文章服务的更新方法
@@ -129,7 +131,7 @@ public class ArticleController {
      * @return 更新后的文章
      */
     @PostMapping("/cancelCarouselArticles")
-    public BaseResponse<ArticleDTO> cancelCarouselArticles(@RequestParam Integer id) {
+    public BaseResponse<ArticleDTO> cancelCarouselArticles(@RequestParam Long id) {
         // 获取文章信息
         ArticleDTO article = articleService.getArticleById(id);
 
@@ -139,7 +141,9 @@ public class ArticleController {
         }
 
         // 取消轮播新闻标识
-        article.setIsCarousel(0);  // 设置为非轮播新闻
+        if (article != null) {
+            article.setIsCarousel(0);  // 设置为非轮播新闻
+        }
 
         // 更新数据库
         articleService.updateArticle(article);  // 调用文章服务的更新方法

@@ -18,6 +18,7 @@ public class ArticleDTO {
 
     private Integer reviewStatus;
     private String reviewMessage;
+    private Integer isCarousel;
     private LocalDateTime createTime;
     private LocalDateTime  updateTime;
 
@@ -25,7 +26,7 @@ public class ArticleDTO {
     private String authorName;
     private String authorAvatar;
 
-    public void setIsCarousel(int i) {
-        this.articleCategory = i;
+    public void setIsCarousel(int isCarousel) {
+        this.isCarousel = isCarousel;
     }
 }

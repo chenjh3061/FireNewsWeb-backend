@@ -28,8 +28,8 @@ public class ArticleService {
      * 获取文章
      * @return Article
      */
-    public ArticleDTO getArticleById(Integer id){
-        return articleMapper.getArticleById(Long.valueOf(id));
+    public ArticleDTO getArticleById(Long id){
+        return articleMapper.getArticleById(id);
     }
 
     /**
