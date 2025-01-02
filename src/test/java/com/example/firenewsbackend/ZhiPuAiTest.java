@@ -15,9 +15,11 @@ import java.util.List;
 @SpringBootTest
 public class ZhiPuAiTest {
 
+    private final String apiKey = "cd3e9fa7f67988e4c4a87e6adaad7d4f.tXpGrIlHvyIoqIlL";
+
     @Test
     public void test() {
-        String apiKey = "cd3e9fa7f67988e4c4a87e6adaad7d4f.tXpGrIlHvyIoqIlL";
+
         // 创建客户端
         ClientV4 client = new ClientV4.Builder(apiKey).build();
         // 构造请求

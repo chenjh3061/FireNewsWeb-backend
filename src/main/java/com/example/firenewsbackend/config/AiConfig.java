@@ -19,11 +19,9 @@ public class AiConfig {
 
     @Bean
     public ClientV4 getClientV4() {
-        if (apiKey == null) {
-            throw new RuntimeException("apiKey is null");
-        }
         return new ClientV4.Builder(apiKey).build();
     }
+
 
 
 }

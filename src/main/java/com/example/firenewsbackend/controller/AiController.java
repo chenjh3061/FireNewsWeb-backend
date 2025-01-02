@@ -8,6 +8,8 @@ import com.example.firenewsbackend.model.dto.UserQuestionResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/ai")
 public class AiController {
@@ -18,11 +20,13 @@ public class AiController {
     /**
      * 获取新闻总结
      *
-     * @param newsContent 新闻内容
+     * @param params 新闻内容
      * @return AI 生成的总结
      */
     @PostMapping("/generateSummary")
-    public BaseResponse<NewsSummaryDTO> generateNewsSummary(@RequestBody String newsContent) {
+    public BaseResponse<NewsSummaryDTO> generateNewsSummary(@RequestBody Map<String, String> params) {
+//        System.out.println("新闻内容"+newsContent);
+        String newsContent = params.get("content");
         String summary = aiManager.generateNewsSummary(newsContent);
         NewsSummaryDTO response = new NewsSummaryDTO(summary);
         return ResultUtils.success(response);
