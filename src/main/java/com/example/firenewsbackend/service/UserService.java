@@ -69,6 +69,13 @@ public class UserService {
         return user;
     }
 
+    /**
+     * 新增用户
+     */
+    public void addUser(User user) {
+        userMapper.insert(user);
+    }
+
 
     /**
      * 用户登录
@@ -91,11 +98,9 @@ public class UserService {
 
     /**
      * 更新用户
-     * @return User
      */
-    public User updateUser(User user){
+    public void updateUser(User user){
         userMapper.updateById(user);
-        return user;
     }
 
     /**

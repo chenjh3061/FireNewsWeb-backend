@@ -19,7 +19,7 @@ public class CommentService{
         return commentMapper.selectList(null);
     }
 
-    public List<Comments> getAllCommentsByArticleId(Integer id) {
+    public List<Comments> getAllCommentsByArticleId(Long id) {
         return commentMapper.getAllCommentsByArticleId(id);
     }
 

@@ -23,12 +23,12 @@ public class CommentController {
      * @return Comments
      */
     @GetMapping("/getAllComments")
-    public BaseResponse<List<Comments>> getComments(){
+    public BaseResponse<List<Comments>> getAllComments(){
         return ResultUtils.success(commentService.getAllComments());
     }
 
     @GetMapping("/getCommentsByArticleId")
-    public BaseResponse<List<Comments>> getCommentsByArticleId(Integer id){
+    public BaseResponse<List<Comments>> getCommentsByArticleId(Long id){
         return ResultUtils.success(commentService.getAllCommentsByArticleId(id));
     }
 

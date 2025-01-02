@@ -19,5 +19,5 @@ public interface CommentMapper extends BaseMapper<Comments> {
             "c.likes as likes " +
             "from comments c " +
             "where c.articleId = #{id}")
-    List<Comments> getAllCommentsByArticleId(Integer id);
+    List<Comments> getAllCommentsByArticleId(Long id);
 }

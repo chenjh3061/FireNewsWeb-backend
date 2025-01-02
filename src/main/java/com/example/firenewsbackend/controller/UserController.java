@@ -78,6 +78,15 @@ public class UserController {
     }
 
     /**
+     * 新增用户
+     */
+    @PostMapping("/addUser")
+    public BaseResponse<User> addUser(@RequestBody User user) {
+        userService.addUser(user);
+        return ResultUtils.success(user);
+    }
+
+    /**
      * 用户登录
      * @param userAccount 用户账户
      * @param userPassword 用户密码
