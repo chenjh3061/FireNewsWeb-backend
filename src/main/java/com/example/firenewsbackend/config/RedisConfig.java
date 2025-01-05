@@ -7,7 +7,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
-@Configuration
+//@Configuration
 public class RedisConfig {
 //    因为用到了jsonRedisSerializer，所以要导入jackson依赖
     @Bean
