@@ -1,5 +1,7 @@
 package com.example.firenewsbackend.controller;
 
+import cn.dev33.satoken.annotation.SaCheckRole;
+import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.firenewsbackend.common.BaseResponse;
 import com.example.firenewsbackend.common.ErrorCode;
@@ -103,6 +105,7 @@ public class ArticleController {
      * @return 更新后的文章
      */
     @PostMapping("/setCarouselArticles")
+    @SaCheckRole("admin")
     public BaseResponse<ArticleDTO> setCarouselArticles(@RequestParam Long id) {
         // 获取文章信息
         ArticleDTO article = articleService.getArticleById(id);
@@ -110,6 +113,12 @@ public class ArticleController {
         // 判断文章是否存在
         if (article == null) {
             ResultUtils.error(ErrorCode.NOT_FOUND_ERROR.getCode(),"文章未找到");
+        }
+
+        // 控制数量
+        Long carouselCount = articleService.getCarouselArticleCount();
+        if (carouselCount >= 5) {
+           return (BaseResponse<ArticleDTO>) ResultUtils.error(ErrorCode.SYSTEM_ERROR.getCode(),"轮播新闻数量已达上限");
         }
 
         // 设置轮播新闻标识
@@ -131,6 +140,7 @@ public class ArticleController {
      * @return 更新后的文章
      */
     @PostMapping("/cancelCarouselArticles")
+    @SaCheckRole("admin")
     public BaseResponse<ArticleDTO> cancelCarouselArticles(@RequestParam Long id) {
         // 获取文章信息
         ArticleDTO article = articleService.getArticleById(id);
@@ -160,6 +170,7 @@ public class ArticleController {
      */
     @PostMapping("/addArticle")
     public BaseResponse<Article> addArticle(Article article){
+        StpUtil.checkRoleOr("admin","writer");
         return ResultUtils.success(articleService.addArticle(article));
     }
 
@@ -169,8 +180,10 @@ public class ArticleController {
      */
     @PostMapping("/updateArticle")
     public BaseResponse<ArticleDTO> updateArticle(@RequestBody ArticleDTO articleDTO){
-        System.out.println(articleDTO);
+        StpUtil.checkRoleOr("admin","writer");
         return ResultUtils.success(articleService.updateArticle(articleDTO));
     }
+
+
 
 }

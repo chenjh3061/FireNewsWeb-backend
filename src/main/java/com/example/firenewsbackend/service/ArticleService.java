@@ -108,4 +108,9 @@ public class ArticleService {
         Page<ArticleDTO> page = new Page<>(pageNo, pageSize);
         return articleMapper.getHotNewsByPage(page);
     }
+
+    public Long getCarouselArticleCount() {
+        // 查询当前数据库中已设置为轮播新闻的文章数量
+        return articleMapper.selectCount(new QueryWrapper<Article>().eq("is_carousel", 1));
+    }
 }

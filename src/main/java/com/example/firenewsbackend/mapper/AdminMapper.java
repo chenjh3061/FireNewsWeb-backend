@@ -6,4 +6,5 @@ import com.example.firenewsbackend.model.entity.Article;
 
 public interface AdminMapper extends BaseMapper<AdminStatusDTO>{
 
+
 }

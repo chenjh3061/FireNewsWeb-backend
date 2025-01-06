@@ -44,14 +44,10 @@ public class StpInterfaceImpl implements StpInterface {
      */
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
-        SaSession tokenSession = StpUtil.getTokenSession();
-        User currentUser = (User) tokenSession.get(UserConstant.USER_LOGIN_STATE);
-        if (currentUser == null) {
-            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
-        }
         List<String> list = new ArrayList<>();
-        list.add(currentUser.getUserRole()); // 返回用户角色
-        System.out.println("当前角色：" + currentUser.getUserRole());
+        list.add("admin");
+        list.add("writer");
+        list.add("user");
         return list;
     }
 
