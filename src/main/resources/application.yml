@@ -11,11 +11,19 @@ spring:
     hikari:
       maximum-pool-size: 10
   mvc:
-    pathmatch:
+    path match:
       matching-strategy: ANT_PATH_MATCHER
-
   session:
     store-type: none
+  web:
+    resources:
+      static-locations: classpath:/static/uploads/
+  devtools:
+    restart:
+      enabled: true
+      additional-exclude:
+        - 'static/**'
+
 
 #下面这些内容是为了让MyBatis映射
 #指定Mybatis的Mapper文件

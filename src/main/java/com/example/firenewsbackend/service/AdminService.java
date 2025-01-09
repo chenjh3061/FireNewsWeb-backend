@@ -26,4 +26,14 @@ public class AdminService {
     public Long getArticleNum() {
         return articleMapper.selectCount(null);
     }
+
+    public Long getTodayViewCount() {
+        return null;
+    }
+
+    public Long getRunningDays() {
+
+        return null;
+    }
+
 }

@@ -184,6 +184,26 @@ public class ArticleController {
         return ResultUtils.success(articleService.updateArticle(articleDTO));
     }
 
+    /**
+     * 获取未审核文章
+     */
+    @GetMapping("/getUnreviewedArticles")
+    public BaseResponse<List<ArticleDTO>> getUnreviewedArticles(){
+        return ResultUtils.success(articleService.getUnreviewedArticles());
+    }
+
+    /**
+     * 审核文章
+     */
+    @PostMapping("/reviewArticle")
+    public BaseResponse<ArticleDTO> reviewArticle(@RequestParam Long id, @RequestParam Integer reviewStatus, @RequestParam String reviewMessage){
+        StpUtil.checkRole("admin");
+        ArticleDTO article = articleService.getArticleById(id);
+        article.setReviewStatus(reviewStatus);
+        article.setReviewMessage(reviewMessage);
+        return ResultUtils.success(articleService.updateArticle(article));
+    }
+
 
 
 }

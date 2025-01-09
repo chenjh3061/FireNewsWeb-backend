@@ -1,5 +1,6 @@
 package com.example.firenewsbackend.mapper;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.firenewsbackend.model.dto.ArticleDTO;
@@ -99,7 +100,7 @@ public interface ArticleMapper extends BaseMapper<Article> {
             "WHERE a.articleCategory = #{articleCategory} " +
             "AND a.isDelete = 0 " +
             "AND a.reviewStatus = 1 " +
-            "AND a.createTime >= DATE_SUB(NOW(), INTERVAL 20 DAY) " +  // 只显示过去7天的文章
+            "AND a.createTime >= DATE_SUB(NOW(), INTERVAL 30 DAY) " +  // 只显示过去7天的文章
             "ORDER BY a.viewCount DESC, a.createTime DESC " +
             "LIMIT 20")
     List<ArticleDTO> getHotArticlesByCategory(@Param("articleCategory") int articleCategory);
@@ -167,4 +168,27 @@ public interface ArticleMapper extends BaseMapper<Article> {
             "authorId = #{authorId} " +
             "WHERE id = #{articleId} AND isDelete = 0")
     void updateById(ArticleDTO article);
+
+    @Select("SELECT " +
+            "a.id AS articleId, " +
+            "a.articleTitle AS articleTitle, " +
+            "a.articleDesc AS articleDesc, " +
+            "a.articleAvatar AS articleAvatar, " +
+            "a.articleCategory AS articleCategory, " +
+            "a.articleContent AS articleContent, " +
+            "a.viewCount AS viewCount, " +
+            "a.isCarousel AS isCarousel, " +
+            "a.reviewStatus AS reviewStatus, "+
+            "a.reviewMessage AS reviewMessage, " +
+            "a.createTime AS createTime, " +
+            "a.updateTime AS updateTime, " +
+            "u.id AS authorId, " +
+            "u.userName AS authorName, " +
+            "u.userAvatar AS authorAvatar " +
+            "FROM article a " +
+            "LEFT JOIN user u ON a.authorId = u.id " +
+            "WHERE a.isDelete = 0 " +
+            "AND a.reviewStatus = 0 " +
+            "ORDER BY a.createTime DESC")
+    List<ArticleDTO> getUnreviewedArticles(QueryWrapper<Article> reviewStatus);
 }
