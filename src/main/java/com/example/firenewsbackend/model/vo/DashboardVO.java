@@ -13,4 +13,5 @@ public class DashboardVO {
 
     private Long runningDays;
 
+
 }

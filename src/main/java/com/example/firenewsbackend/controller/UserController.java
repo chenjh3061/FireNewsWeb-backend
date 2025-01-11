@@ -137,23 +137,44 @@ public class UserController {
      * 更新用户
      * @return User
      */
-    @PostMapping("/updateUser")
-    public ResponseEntity<User> updateUser(@RequestBody User user) {
-        if (user.getId() == null) {
-            return ResponseEntity.badRequest().body(null);
+    @PostMapping("/updateUserByUser")
+    public BaseResponse<User> updateUserByUser(@RequestBody User user) {
+        if (user.getId() == null || user.getId() != StpUtil.getLoginIdAsLong()) {
+            return (BaseResponse<User>) ResultUtils.error(ErrorCode.PARAMS_ERROR, "用户id错误");
         }
 
         // 确保 id 是数字类型
         try {
             user.setId(Long.parseLong(user.getId().toString())); // 或者 Integer.parseInt()
         } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().body(null);
+            return (BaseResponse<User>) ResultUtils.error(ErrorCode.PARAMS_ERROR, "请求参数错误");
         }
 
         userService.updateUser(user);
-        return ResponseEntity.ok(user);
+        return ResultUtils.success(user);
     }
 
+    /**
+     * 更新用户（管理员）
+     * 涉及敏感信息
+     */
+    @PostMapping("/updateUserByAdmin")
+    public BaseResponse<User> updateUserByAdmin(@RequestBody User user) {
+        StpUtil.checkRole(UserConstant.ADMIN_ROLE);
+        if (user.getId() == null) {
+            return (BaseResponse<User>) ResultUtils.error(ErrorCode.PARAMS_ERROR, "请求参数错误");
+        }
+
+        // 确保 id 是数字类型
+        try {
+            user.setId(Long.parseLong(user.getId().toString())); // 或者 Integer.parseInt()
+        } catch (NumberFormatException e) {
+            return (BaseResponse<User>) ResultUtils.error(ErrorCode.PARAMS_ERROR, "请求参数错误");
+        }
+
+        userService.updateUser(user);
+        return ResultUtils.success(user);
+    }
 
     /**
      * 删除用户

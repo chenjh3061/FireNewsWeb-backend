@@ -7,6 +7,7 @@ import com.example.firenewsbackend.common.BaseResponse;
 import com.example.firenewsbackend.common.ErrorCode;
 import com.example.firenewsbackend.common.ResultUtils;
 import com.example.firenewsbackend.model.dto.ArticleDTO;
+import com.example.firenewsbackend.model.dto.article.ArticleReviewRequest;
 import com.example.firenewsbackend.model.entity.Article;
 import com.example.firenewsbackend.service.ArticleService;
 import org.springframework.http.ResponseEntity;
@@ -196,8 +197,11 @@ public class ArticleController {
      * 审核文章
      */
     @PostMapping("/reviewArticle")
-    public BaseResponse<ArticleDTO> reviewArticle(@RequestParam Long id, @RequestParam Integer reviewStatus, @RequestParam String reviewMessage){
+    public BaseResponse<ArticleDTO> reviewArticle(@RequestBody ArticleReviewRequest request){
         StpUtil.checkRole("admin");
+        Long id = request.getId();
+        Integer reviewStatus = request.getReviewStatus();
+        String reviewMessage = request.getReviewMessage();
         ArticleDTO article = articleService.getArticleById(id);
         article.setReviewStatus(reviewStatus);
         article.setReviewMessage(reviewMessage);

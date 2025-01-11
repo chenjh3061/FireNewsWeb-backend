@@ -6,8 +6,8 @@ import com.example.firenewsbackend.common.ResultUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.boot.system.ApplicationHome;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.CacheControl;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.io.Resource;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -76,6 +76,39 @@ public class UploadController {
         }
         return ResultUtils.error(ErrorCode.OPERATION_ERROR,"图片上传失败");
     }
+
+    @Operation(summary = "下载图片")
+    @GetMapping("/download")
+    public ResponseEntity<Resource> download(@RequestParam("filePath") String filePath) {
+        try {
+            // 定义文件存储的根路径
+            ApplicationHome applicationHome = new ApplicationHome(this.getClass());
+            String pre = applicationHome.getDir().getParentFile().getParentFile().getParentFile().getAbsolutePath() + "\\fireNews-Backend\\src\\main\\resources\\static\\uploads\\";
+            File file = new File(pre + filePath); // 拼接实际路径
+
+            // 判断文件是否存在
+            if (!file.exists()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // 文件不存在返回404
+            }
+
+            // 创建Resource对象
+            Resource resource = new FileSystemResource(file);
+            if (!resource.exists()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // 文件不存在返回404
+            }
+
+            // 返回文件并设置响应头为下载类型
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getName() + "\"")
+                    .body(resource);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // 服务器错误
+        }
+    }
+
 }
 
 
