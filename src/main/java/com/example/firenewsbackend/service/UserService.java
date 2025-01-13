@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.firenewsbackend.common.ErrorCode;
 import com.example.firenewsbackend.constant.UserConstant;
 import com.example.firenewsbackend.exception.BusinessException;
+import com.example.firenewsbackend.model.dto.user.UpdateByUserRequest;
 import com.example.firenewsbackend.model.entity.User;
 import com.example.firenewsbackend.mapper.UserMapper;
 import com.example.firenewsbackend.model.vo.LoginUserVO;
@@ -181,6 +182,10 @@ public class UserService {
      */
     public void updateUser(User user){
         userMapper.updateById(user);
+    }
+
+    public void updateUserByUser(UpdateByUserRequest user){
+        userMapper.updateByUser(user);
     }
 
     /**

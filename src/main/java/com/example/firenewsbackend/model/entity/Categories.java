@@ -13,7 +13,7 @@ public class Categories {
 
     private Long id;
 
-    private String categoryName;
+    private String name;
 
     private String description;
 
@@ -23,6 +23,6 @@ public class Categories {
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime  updateTime;
 
-    private Integer isDeleted;
+    private Integer isDelete;
 
 }

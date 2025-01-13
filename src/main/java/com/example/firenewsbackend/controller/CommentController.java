@@ -3,6 +3,7 @@ package com.example.firenewsbackend.controller;
 import com.example.firenewsbackend.common.BaseResponse;
 import com.example.firenewsbackend.common.ResultUtils;
 import com.example.firenewsbackend.model.entity.Comments;
+import com.example.firenewsbackend.model.vo.CommentsVO;
 import com.example.firenewsbackend.service.CommentService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +24,7 @@ public class CommentController {
      * @return Comments
      */
     @GetMapping("/getAllComments")
-    public BaseResponse<List<Comments>> getAllComments(){
+    public BaseResponse<List<CommentsVO>> getAllComments(){
         return ResultUtils.success(commentService.getAllComments());
     }
 

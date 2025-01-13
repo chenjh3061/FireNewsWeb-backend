@@ -191,4 +191,7 @@ public interface ArticleMapper extends BaseMapper<Article> {
             "AND a.reviewStatus = 0 " +
             "ORDER BY a.createTime DESC")
     List<ArticleDTO> getUnreviewedArticles(QueryWrapper<Article> reviewStatus);
+
+    @Update("UPDATE article SET isDelete = 1 WHERE id = #{id}")
+    void setIsDelete(Integer id);
 }

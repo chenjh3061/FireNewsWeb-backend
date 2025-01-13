@@ -208,6 +208,16 @@ public class ArticleController {
         return ResultUtils.success(articleService.updateArticle(article));
     }
 
+    /**
+     * 删除文章
+     * @param id
+     * @return Article
+     */
+    @PostMapping("/deleteArticle")
+    public BaseResponse<Article> deleteArticle(Integer id){
+        StpUtil.checkRole("admin");
+        return ResultUtils.success(articleService.deleteArticle(id));
+    }
 
 
 }

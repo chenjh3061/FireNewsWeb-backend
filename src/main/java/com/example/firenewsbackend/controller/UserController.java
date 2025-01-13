@@ -8,6 +8,7 @@ import com.example.firenewsbackend.common.ErrorCode;
 import com.example.firenewsbackend.common.ResultUtils;
 import com.example.firenewsbackend.constant.UserConstant;
 import com.example.firenewsbackend.exception.BusinessException;
+import com.example.firenewsbackend.model.dto.user.UpdateByUserRequest;
 import com.example.firenewsbackend.model.entity.User;
 import com.example.firenewsbackend.model.vo.LoginUserVO;
 import com.example.firenewsbackend.service.UserService;
@@ -138,20 +139,53 @@ public class UserController {
      * @return User
      */
     @PostMapping("/updateUserByUser")
-    public BaseResponse<User> updateUserByUser(@RequestBody User user) {
+    public BaseResponse<UpdateByUserRequest> updateUserByUser(@RequestBody UpdateByUserRequest user) {
         if (user.getId() == null || user.getId() != StpUtil.getLoginIdAsLong()) {
-            return (BaseResponse<User>) ResultUtils.error(ErrorCode.PARAMS_ERROR, "用户id错误");
+            return (BaseResponse<UpdateByUserRequest>) ResultUtils.error(ErrorCode.PARAMS_ERROR, "用户id错误");
         }
 
         // 确保 id 是数字类型
         try {
             user.setId(Long.parseLong(user.getId().toString())); // 或者 Integer.parseInt()
         } catch (NumberFormatException e) {
-            return (BaseResponse<User>) ResultUtils.error(ErrorCode.PARAMS_ERROR, "请求参数错误");
+            return (BaseResponse<UpdateByUserRequest>) ResultUtils.error(ErrorCode.PARAMS_ERROR, "请求参数错误");
         }
 
-        userService.updateUser(user);
+        userService.updateUserByUser(user);
         return ResultUtils.success(user);
+    }
+
+    /**
+     * 用户修改密码
+     */
+    @PostMapping("/updatePassword")
+    public BaseResponse<Boolean> updatePassword(@RequestBody Map<String, String> params) {
+        String oldPassword = params.get("oldPassword");
+        String newPassword = params.get("newPassword");
+        String checkPassword = params.get("checkPassword");
+
+        if (oldPassword == null || newPassword == null || checkPassword == null) {
+            return (BaseResponse<Boolean>) ResultUtils.error(ErrorCode.PARAMS_ERROR.getCode(), "请求参数错误");
+        }
+
+        // 获取当前登录用户
+        User user = userService.getLoginUser();
+
+        // 判断旧密码是否正确
+        if (!oldPassword.equals(user.getUserPassword())) {
+            return (BaseResponse<Boolean>) ResultUtils.error(ErrorCode.PARAMS_ERROR.getCode(), "旧密码错误");
+        }
+
+        // 判断新密码是否与确认密码一致
+        if (!newPassword.equals(checkPassword)) {
+            return (BaseResponse<Boolean>) ResultUtils.error(ErrorCode.PARAMS_ERROR.getCode(), "两次输入的密码不一致");
+        }
+
+        // 更新密码
+        user.setUserPassword(newPassword);
+        userService.updateUser(user);
+
+        return ResultUtils.success(true);
     }
 
     /**

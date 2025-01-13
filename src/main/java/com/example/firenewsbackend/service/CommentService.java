@@ -4,6 +4,7 @@ import com.example.firenewsbackend.common.BaseResponse;
 import com.example.firenewsbackend.common.ResultUtils;
 import com.example.firenewsbackend.mapper.CommentMapper;
 import com.example.firenewsbackend.model.entity.Comments;
+import com.example.firenewsbackend.model.vo.CommentsVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -15,8 +16,8 @@ public class CommentService{
     @Resource
     private CommentMapper  commentMapper;
 
-    public List<Comments> getAllComments() {
-        return commentMapper.selectList(null);
+    public List<CommentsVO> getAllComments() {
+        return commentMapper.getAllComments();
     }
 
     public List<Comments> getAllCommentsByArticleId(Long id) {

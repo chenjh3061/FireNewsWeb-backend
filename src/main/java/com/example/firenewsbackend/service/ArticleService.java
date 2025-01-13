@@ -1,5 +1,6 @@
 package com.example.firenewsbackend.service;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.firenewsbackend.model.dto.ArticleDTO;
@@ -25,7 +26,7 @@ public class ArticleService {
     }
 
     /**
-     * 获取文章
+     * 获取指定文章
      * @return Article
      */
     public ArticleDTO getArticleById(Long id){
@@ -65,6 +66,8 @@ public class ArticleService {
     public List<Article> getCarouselArticles(){
         QueryWrapper<Article> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("isCarousel", 1);
+        queryWrapper.eq("reviewStatus", 1);
+        queryWrapper.eq("isDelete", 0);
         return articleMapper.selectList(queryWrapper);
     }
 
@@ -95,7 +98,8 @@ public class ArticleService {
      * @return Article
      */
     public Article deleteArticle(Integer id){
-        articleMapper.deleteById(id);
+        StpUtil.checkRole("admin");
+        articleMapper.setIsDelete(id);
         return null;
     }
 
