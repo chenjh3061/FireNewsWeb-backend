@@ -1,5 +1,6 @@
 package com.example.firenewsbackend.controller;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.example.firenewsbackend.common.ResultUtils;
 import com.example.firenewsbackend.manager.AiManager;
 import com.example.firenewsbackend.common.BaseResponse;
@@ -26,6 +27,7 @@ public class AiController {
     @PostMapping("/generateSummary")
     public BaseResponse<NewsSummaryDTO> generateNewsSummary(@RequestBody Map<String, String> params) {
 //        System.out.println("新闻内容"+newsContent);
+        StpUtil.checkLogin();
         String newsContent = params.get("content");
         String summary = aiManager.generateNewsSummary(newsContent);
         NewsSummaryDTO response = new NewsSummaryDTO(summary);
@@ -40,6 +42,7 @@ public class AiController {
      */
     @PostMapping("/askQuestion")
     public BaseResponse<UserQuestionResponseDTO> askQuestion(@RequestBody String userQuestion) {
+        StpUtil.checkLogin();
         String answer = aiManager.processUserQuestion(userQuestion);
         UserQuestionResponseDTO response = new UserQuestionResponseDTO(answer);
         return ResultUtils.success(response);

@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Data
 @TableName("user")
 public class User {
+    // admin 123
 
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
