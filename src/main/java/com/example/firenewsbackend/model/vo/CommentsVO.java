@@ -32,4 +32,10 @@ public class CommentsVO {
     private String content; // 评论内容
 
     private Integer likes; // 点赞数
+
+    private Integer isShow;
+
+    public void setIsShow(int isShow) {
+        this.isShow = isShow;
+    }
 }

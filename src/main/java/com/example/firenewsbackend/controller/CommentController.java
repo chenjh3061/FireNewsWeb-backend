@@ -5,10 +5,8 @@ import com.example.firenewsbackend.common.ResultUtils;
 import com.example.firenewsbackend.model.entity.Comments;
 import com.example.firenewsbackend.model.vo.CommentsVO;
 import com.example.firenewsbackend.service.CommentService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -29,12 +27,17 @@ public class CommentController {
     }
 
     @GetMapping("/getCommentsByArticleId")
-    public BaseResponse<List<Comments>> getCommentsByArticleId(Long id){
+    public BaseResponse<List<CommentsVO>> getCommentsByArticleId(Long id){
         return ResultUtils.success(commentService.getAllCommentsByArticleId(id));
     }
 
     @PostMapping("/addComment")
     public BaseResponse<Comments> addComment(Comments comment){
-        return commentService.addComment(comment);
+        return ResultUtils.success(commentService.addComment(comment).getData());
+    }
+
+    @PostMapping("/changeCommentStatus")
+    public BaseResponse<CommentsVO> changeCommentStatus(@RequestParam Long id, @RequestParam Integer status){
+        return ResultUtils.success(commentService.changeCommentStatus(id, status));
     }
 }
