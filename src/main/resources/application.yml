@@ -23,7 +23,10 @@ spring:
       enabled: true
       additional-exclude:
         - 'static/**'
-
+  elasticsearch:
+    uris: http://localhost:9200
+    username: root
+    password: 123456
 
 #下面这些内容是为了让MyBatis映射
 #指定Mybatis的Mapper文件
@@ -78,3 +81,16 @@ sa-token:
   # 是否输出操作日志
   is-log: true
   # 角色
+
+logging:
+  level:
+    root: INFO
+  logback:
+    # Add Elasticsearch appender configuration here
+    appenders:
+      - type: Elasticsearch
+        name: elasticsearchAppender
+        host: "localhost"
+        port: 9200
+        index: "app-logs"
+        pattern: '{"timestamp":"%date{yyyy-MM-dd HH:mm:ss}","user_id":"%X{user_id}","action":"%X{action}","article_id":"%X{article_id}"}'

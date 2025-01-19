@@ -8,7 +8,9 @@ import com.example.firenewsbackend.model.entity.Article;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 public interface ArticleMapper extends BaseMapper<Article> {
@@ -194,4 +196,7 @@ public interface ArticleMapper extends BaseMapper<Article> {
 
     @Update("UPDATE article SET isDelete = 1 WHERE id = #{id}")
     void setIsDelete(Integer id);
+
+    @Select("select * from article where createTime > #{fiveMinutesAgoDate} and isDelete = 0")
+    List<Article> listArticleWithDelete(Date fiveMinutesAgoDate);
 }

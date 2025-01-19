@@ -40,5 +40,11 @@ public class Article {
     @TableLogic
     private Integer isDelete;
 
+    public void setTags(String jsonStr) {
+    }
+
+    public String getTags() {
+        return null;
+    }
 }
 

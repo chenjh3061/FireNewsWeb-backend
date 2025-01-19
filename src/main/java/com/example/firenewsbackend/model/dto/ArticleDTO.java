@@ -29,4 +29,7 @@ public class ArticleDTO {
     public void setIsCarousel(int isCarousel) {
         this.isCarousel = isCarousel;
     }
+
+    public void setTags(String join) {
+    }
 }

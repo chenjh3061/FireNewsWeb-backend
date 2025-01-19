@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.firenewsbackend.common.BaseResponse;
 import com.example.firenewsbackend.common.ErrorCode;
 import com.example.firenewsbackend.common.ResultUtils;
+import com.example.firenewsbackend.job.IncSyncArticleToEs;
 import com.example.firenewsbackend.model.dto.ArticleDTO;
 import com.example.firenewsbackend.model.dto.article.ArticleReviewRequest;
 import com.example.firenewsbackend.model.entity.Article;
@@ -63,6 +64,11 @@ public class ArticleController {
             @RequestParam int pageSize){
         Page<ArticleDTO> articlesPage = articleService.getHotNewsByPage(pageNo, pageSize);
         return ResultUtils.success(articlesPage);
+    }
+
+    @GetMapping("/searchArticle")
+    public BaseResponse<List<ArticleDTO>> searchArticle(@RequestParam String searchParams) {
+        return ResultUtils.success(articleService.searchArticle(searchParams));
     }
 
 
@@ -219,5 +225,12 @@ public class ArticleController {
         return ResultUtils.success(articleService.deleteArticle(id));
     }
 
+    /**
+     * 记录用户浏览
+     */
+    @PostMapping("/recordArticleView")
+    public BaseResponse<ArticleDTO> recordArticleView(@RequestParam Long articleId, @RequestParam Long userId) {
+        return ResultUtils.success(articleService.recordArticleView(articleId, userId));
+    }
 
 }
