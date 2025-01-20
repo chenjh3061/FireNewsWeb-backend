@@ -158,7 +158,13 @@ public class ArticleService {
     public ArticleDTO recordArticleView(Long articleId, Long userId) {
         logger.info("{\"timestamp\":\"" + System.currentTimeMillis() + "\",\"user_id\":\"" + userId + "\",\"action\":\"view_article\",\"article_id\":\"" + articleId + "\",\"article_title\":\"文章标题\",\"ip\":\"127.0.0.1\"}");
         ArticleDTO article = articleMapper.getArticleById(articleId);
-        article.setViewCount(article.getViewCount() + 1);
+        if (article == null) {
+            logger.error("Article not found with id: " + articleId);
+            // throw new RuntimeException("Article not found");
+        }
+        if (article != null) {
+            article.setViewCount(article.getViewCount() + 1L);
+        }
         articleMapper.updateById(article);
         return article;
     }

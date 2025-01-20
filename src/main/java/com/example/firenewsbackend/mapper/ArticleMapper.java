@@ -56,8 +56,7 @@ public interface ArticleMapper extends BaseMapper<Article> {
             "FROM article a " +
             "LEFT JOIN user u ON a.authorId = u.id " +
             "WHERE a.id = #{articleId} " +  // 根据文章ID查找
-            "AND a.isDelete = 0 " +         // 确保文章未删除
-            "AND a.reviewStatus = 1")       // 只返回审核通过的文章
+            "AND a.isDelete = 0 " )
     ArticleDTO getArticleById(@Param("articleId") Long articleId);
 
     @Select("SELECT +" +
@@ -167,7 +166,8 @@ public interface ArticleMapper extends BaseMapper<Article> {
             "reviewStatus = #{reviewStatus}, " +
             "reviewMessage = #{reviewMessage}, " +
             "updateTime = #{updateTime}, " +
-            "authorId = #{authorId} " +
+            "authorId = #{authorId}, " +
+            "viewCount = #{viewCount} " +
             "WHERE id = #{articleId} AND isDelete = 0")
     void updateById(ArticleDTO article);
 

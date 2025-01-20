@@ -14,7 +14,7 @@ public class ArticleDTO {
     private String articleAvatar;
     private Integer articleCategory;
     private String articleContent;
-    private Long viewCount;
+    private Long viewCount = 0L;
 
     private Integer reviewStatus;
     private String reviewMessage;

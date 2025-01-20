@@ -209,6 +209,9 @@ public class ArticleController {
         Integer reviewStatus = request.getReviewStatus();
         String reviewMessage = request.getReviewMessage();
         ArticleDTO article = articleService.getArticleById(id);
+        if (article == null) {
+            throw  new RuntimeException(id + "文章未找到");
+        }
         article.setReviewStatus(reviewStatus);
         article.setReviewMessage(reviewMessage);
         return ResultUtils.success(articleService.updateArticle(article));
@@ -230,6 +233,7 @@ public class ArticleController {
      */
     @PostMapping("/recordArticleView")
     public BaseResponse<ArticleDTO> recordArticleView(@RequestParam Long articleId, @RequestParam Long userId) {
+        StpUtil.checkLogin();
         return ResultUtils.success(articleService.recordArticleView(articleId, userId));
     }
 
