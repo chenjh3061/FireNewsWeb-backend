@@ -12,6 +12,7 @@ import com.example.firenewsbackend.model.entity.User;
 import com.example.firenewsbackend.mapper.UserMapper;
 import com.example.firenewsbackend.model.vo.LoginUserVO;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -76,6 +77,9 @@ public class UserService {
         if (existingUser != null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR.getCode(), "该账户已存在");
         }
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String encryptedPassword = encoder.encode(userPassword); // 加密密码
 
         // 3. 创建用户并保存到数据库
         User user = new User();
@@ -146,6 +150,9 @@ public class UserService {
         StpUtil.login(user.getId());
         StpUtil.getTokenSession().set("UserRole", user.getUserRole());
         String tokenValue = StpUtil.getTokenValue();
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String encryptedPassword = encoder.encode(userPassword); // 加密密码
 
         LoginUserVO loginUserVO = new LoginUserVO();
         BeanUtils.copyProperties(user, loginUserVO);
