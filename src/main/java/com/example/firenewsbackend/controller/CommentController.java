@@ -1,5 +1,6 @@
 package com.example.firenewsbackend.controller;
 
+import com.example.firenewsbackend.aop.LoggableOperation;
 import com.example.firenewsbackend.common.BaseResponse;
 import com.example.firenewsbackend.common.ResultUtils;
 import com.example.firenewsbackend.model.entity.Comments;
@@ -31,10 +32,23 @@ public class CommentController {
         return ResultUtils.success(commentService.getAllCommentsByArticleId(id));
     }
 
+    /**
+     * 发表评论
+     * @param comment
+     * @return
+     */
+    @LoggableOperation(operationName = "发表评论", actionType = "comment", targetType = "comment")
     @PostMapping("/addComment")
     public BaseResponse<Comments> addComment(Comments comment){
         return ResultUtils.success(commentService.addComment(comment).getData());
     }
+
+    /**
+     * 修改评论状态
+     * @param id
+     * @param status
+     * @return
+     */
 
     @PostMapping("/changeCommentStatus")
     public BaseResponse<CommentsVO> changeCommentStatus(@RequestParam Long id, @RequestParam Integer status){

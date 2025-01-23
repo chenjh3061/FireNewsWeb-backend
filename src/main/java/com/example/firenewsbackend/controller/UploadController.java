@@ -1,9 +1,15 @@
 package com.example.firenewsbackend.controller;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.example.firenewsbackend.common.BaseResponse;
 import com.example.firenewsbackend.common.ErrorCode;
 import com.example.firenewsbackend.common.ResultUtils;
 import io.swagger.v3.oas.annotations.Operation;
+import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.extractor.WordExtractor;
+import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.jsoup.Jsoup;
 import org.springframework.boot.system.ApplicationHome;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -11,14 +17,16 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import javax.swing.text.Document;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @RestController
+@RequestMapping("/upload")
 public class UploadController {
 
 //    @RequestMapping("/uploads/{filename:.+}")
@@ -41,8 +49,9 @@ public class UploadController {
 //    }
 
     @Operation(summary = "上传图片到本地")
-    @PostMapping("/upload")
+    @PostMapping("/img")
     public BaseResponse<?> upload(MultipartFile file) {
+        StpUtil.checkLogin();
         if (file.isEmpty()) {
             return ResultUtils.error(ErrorCode.PARAMS_ERROR, "file is empty");
         } else if (file.getSize() > 4096 * 4096) {
@@ -107,6 +116,98 @@ public class UploadController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // 服务器错误
         }
+    }
+
+    @Operation(summary = "上传文档文件并解析为HTML")
+    @PostMapping("/document")
+    public BaseResponse<?> uploadAndParse(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR, "文件为空");
+        }
+
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null || !(originalFilename.endsWith(".doc") || originalFilename.endsWith(".docx") ||
+                originalFilename.endsWith(".txt") || originalFilename.endsWith(".md"))) {
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR, "不支持的文件类型");
+        }
+
+        try {
+            String htmlContent = null;
+
+            // 根据文件类型解析内容为HTML格式
+            if (originalFilename.endsWith(".doc")) {
+                htmlContent = parseDoc(file);
+            } else if (originalFilename.endsWith(".docx")) {
+                htmlContent = parseDocx(file);
+            } else if (originalFilename.endsWith(".txt")) {
+                htmlContent = parseTxt(file);
+            } else if (originalFilename.endsWith(".md")) {
+                htmlContent = parseMarkdown(file);
+            }
+
+            if (htmlContent == null) {
+                return ResultUtils.error(ErrorCode.OPERATION_ERROR, "文件解析失败");
+            }
+
+            // 返回HTML内容，前端可跳转到文章编辑页面并填充
+            return ResultUtils.success(htmlContent);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResultUtils.error(ErrorCode.OPERATION_ERROR, "文件处理失败");
+        }
+    }
+
+    // 解析 .doc 文件
+    private String parseDoc(MultipartFile file) throws IOException {
+        try (InputStream inputStream = file.getInputStream();
+             HWPFDocument document = new HWPFDocument(inputStream);
+             WordExtractor extractor = new WordExtractor(document)) {
+            return formatHtml(extractor.getText());
+        }
+    }
+
+    // 解析 .docx 文件
+    private String parseDocx(MultipartFile file) throws IOException {
+        try (InputStream inputStream = file.getInputStream();
+             XWPFDocument document = new XWPFDocument(inputStream);
+             XWPFWordExtractor extractor = new XWPFWordExtractor(document)) {
+            return formatHtml(extractor.getText());
+        }
+    }
+
+    // 解析 .txt 文件
+    private String parseTxt(MultipartFile file) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
+            StringBuilder content = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append("\n");
+            }
+            return formatHtml(content.toString());
+        }
+    }
+
+    // 解析 .md 文件
+    private String parseMarkdown(MultipartFile file) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
+            StringBuilder content = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append("\n");
+            }
+
+            // 使用 Flexmark 将 Markdown 转换为 HTML
+            return com.vladsch.flexmark.html.HtmlRenderer.builder()
+                    .build()
+                    .render(com.vladsch.flexmark.parser.Parser.builder().build().parse(content.toString()));
+        }
+    }
+
+
+    // 格式化为HTML
+    private String formatHtml(String content) {
+        return  content.replace("\n", "<br>");
     }
 
 }

@@ -149,6 +149,7 @@ public class UserService {
         // 生成Token并保存
         StpUtil.login(user.getId());
         StpUtil.getTokenSession().set("UserRole", user.getUserRole());
+        StpUtil.getTokenSession().set("UserAccount", user.getUserAccount());
         String tokenValue = StpUtil.getTokenValue();
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();

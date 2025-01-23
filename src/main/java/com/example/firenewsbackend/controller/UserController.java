@@ -3,6 +3,7 @@ package com.example.firenewsbackend.controller;
 import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.firenewsbackend.aop.LoggableOperation;
 import com.example.firenewsbackend.common.BaseResponse;
 import com.example.firenewsbackend.common.ErrorCode;
 import com.example.firenewsbackend.common.ResultUtils;
@@ -81,6 +82,7 @@ public class UserController {
      * 用户注册
      * @param params 用户密码
      */
+    @LoggableOperation(operationName = "用户注册", actionType = "register", targetType = "user")
     @PostMapping("/register")
     public BaseResponse<User> register(@RequestBody Map<String, String> params){
         String userAccount = params.get("userAccount");
@@ -138,6 +140,7 @@ public class UserController {
      * 更新用户
      * @return User
      */
+    @LoggableOperation(operationName = "更新用户信息", actionType = "edit", targetType = "user")
     @PostMapping("/updateUserByUser")
     public BaseResponse<UpdateByUserRequest> updateUserByUser(@RequestBody UpdateByUserRequest user) {
         if (user.getId() == null || user.getId() != StpUtil.getLoginIdAsLong()) {
@@ -158,6 +161,7 @@ public class UserController {
     /**
      * 用户修改密码
      */
+    @LoggableOperation(operationName = "修改密码", actionType = "edit", targetType = "user")
     @PostMapping("/updatePassword")
     public BaseResponse<Boolean> updatePassword(@RequestBody Map<String, String> params) {
         String oldPassword = params.get("oldPassword");
@@ -192,6 +196,7 @@ public class UserController {
      * 更新用户（管理员）
      * 涉及敏感信息
      */
+    @LoggableOperation(operationName = "更新用户信息", actionType = "edit", targetType = "user")
     @PostMapping("/updateUserByAdmin")
     public BaseResponse<User> updateUserByAdmin(@RequestBody User user) {
         StpUtil.checkRole(UserConstant.ADMIN_ROLE);
@@ -215,9 +220,10 @@ public class UserController {
      * @param id
      * @return User
      */
+    @LoggableOperation(operationName = "删除用户", actionType = "delete", targetType = "user")
     @PostMapping("/deleteUser")
-    @SaCheckRole(UserConstant.ADMIN_ROLE)
     public BaseResponse<User> deleteUser(@RequestParam Integer id){
+        StpUtil.checkRole(UserConstant.ADMIN_ROLE);
         return ResultUtils.success(userService.deleteUser(id));
     }
 

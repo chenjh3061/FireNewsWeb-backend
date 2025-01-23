@@ -10,8 +10,11 @@ import lombok.Data;
 public class Log {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
-    private String name;
+    private String name;          // 操作内容
     private String createTime;
     private String userAccount;
+    private String actionType;
+    private String targetType;
+    private String targetId;
     private String ip;
 }

@@ -3,6 +3,7 @@ package com.example.firenewsbackend.controller;
 import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.firenewsbackend.aop.LoggableOperation;
 import com.example.firenewsbackend.common.BaseResponse;
 import com.example.firenewsbackend.common.ErrorCode;
 import com.example.firenewsbackend.common.ResultUtils;
@@ -175,6 +176,7 @@ public class ArticleController {
      * @param article
      * @return Article
      */
+    @LoggableOperation(operationName = "发布文章", actionType = "publish", targetType = "article")
     @PostMapping("/addArticle")
     public BaseResponse<Article> addArticle(Article article){
         StpUtil.checkRoleOr("admin","writer");
@@ -185,6 +187,7 @@ public class ArticleController {
      * 更新文章
      * @return Article
      */
+    @LoggableOperation(operationName = "编辑文章", actionType = "edit", targetType = "article")
     @PostMapping("/updateArticle")
     public BaseResponse<ArticleDTO> updateArticle(@RequestBody ArticleDTO articleDTO){
         StpUtil.checkRoleOr("admin","writer");
@@ -202,6 +205,7 @@ public class ArticleController {
     /**
      * 审核文章
      */
+    @LoggableOperation(operationName = "审核文章", actionType = "review", targetType = "article")
     @PostMapping("/reviewArticle")
     public BaseResponse<ArticleDTO> reviewArticle(@RequestBody ArticleReviewRequest request){
         StpUtil.checkRole("admin");
@@ -222,6 +226,7 @@ public class ArticleController {
      * @param id
      * @return Article
      */
+    @LoggableOperation(operationName = "删除文章", actionType = "delete", targetType = "article")
     @PostMapping("/deleteArticle")
     public BaseResponse<Article> deleteArticle(Integer id){
         StpUtil.checkRole("admin");
