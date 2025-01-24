@@ -1,5 +1,7 @@
 package com.example.firenewsbackend.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.firenewsbackend.common.BaseResponse;
 import com.example.firenewsbackend.mapper.CommentMapper;
 import com.example.firenewsbackend.model.entity.Comments;
@@ -7,6 +9,7 @@ import com.example.firenewsbackend.model.vo.CommentsVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -19,13 +22,16 @@ public class CommentService{
         return commentMapper.getAllComments();
     }
 
-    public List<CommentsVO> getAllCommentsByArticleId(Long id) {
-        return commentMapper.getAllCommentsByArticleId(id);
+    public IPage<CommentsVO> getAllCommentsByArticleId(Long id, int page, int size) {
+        Page<CommentsVO> pageParam = new Page<>(page, size);
+        return commentMapper.getAllCommentsByArticleId(pageParam,id);
     }
 
-    public BaseResponse<Comments> addComment(Comments comment) {
+    public Comments addComment(Comments comment) {
+        System.out.println(comment);
+        comment.setCreateTime(LocalDateTime.now());
         commentMapper.insert(comment);
-        return null;
+        return comment;
     }
 
     public CommentsVO changeCommentStatus(Long id, Integer status) {

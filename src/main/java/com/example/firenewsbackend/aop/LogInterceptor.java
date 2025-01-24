@@ -77,7 +77,7 @@ public class LogInterceptor {
         // 获取用户信息和请求参数
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         // 获取用户信息
-        String userAccount = StpUtil.getLoginId() != null ? StpUtil.getTokenSession().get("UserAccount").toString() : "未登录";
+        String userAccount = StpUtil.isLogin() ? StpUtil.getTokenSession().get("UserAccount").toString() : "未登录";
 
         Object[] args = point.getArgs();
 

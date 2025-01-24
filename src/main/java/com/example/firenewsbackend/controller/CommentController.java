@@ -28,8 +28,10 @@ public class CommentController {
     }
 
     @GetMapping("/getCommentsByArticleId")
-    public BaseResponse<List<CommentsVO>> getCommentsByArticleId(Long id){
-        return ResultUtils.success(commentService.getAllCommentsByArticleId(id));
+    public BaseResponse<List<CommentsVO>> getCommentsByArticleId(@RequestParam Long id,
+                                                                 @RequestParam(defaultValue = "1") int page,
+                                                                @RequestParam(defaultValue = "10") int size){
+        return ResultUtils.success(commentService.getAllCommentsByArticleId(id,page,size).getRecords());
     }
 
     /**
@@ -39,8 +41,8 @@ public class CommentController {
      */
     @LoggableOperation(operationName = "发表评论", actionType = "comment", targetType = "comment")
     @PostMapping("/addComment")
-    public BaseResponse<Comments> addComment(Comments comment){
-        return ResultUtils.success(commentService.addComment(comment).getData());
+    public BaseResponse<Comments> addComment(@RequestBody Comments comment){
+        return ResultUtils.success(commentService.addComment(comment));
     }
 
     /**
