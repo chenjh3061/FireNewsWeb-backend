@@ -1,7 +1,10 @@
 package com.example.firenewsbackend.service;
 
+import com.example.firenewsbackend.mapper.LogMapper;
+import com.example.firenewsbackend.model.entity.Log;
 import com.example.firenewsbackend.repository.LogEntry;
 import org.elasticsearch.index.similarity.ScriptedSimilarity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
@@ -22,6 +25,8 @@ public class LogService {
 
     @Resource
     private ElasticsearchRestTemplate elasticsearchRestTemplate;
+    @Autowired
+    private LogMapper logMapper;
 
     // 记录操作日志
     public void logAction(String action, String userId, String description) {
@@ -56,6 +61,10 @@ public class LogService {
         }
 
         return result;
+    }
+
+    public List<Log> getRecentLog(int limit) {
+        return logMapper.findRecentLogs(limit);
     }
 }
 

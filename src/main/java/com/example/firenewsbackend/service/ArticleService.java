@@ -111,7 +111,8 @@ public class ArticleService {
     public ArticleDTO updateArticle(ArticleDTO article){
         // 获取当前登录用户角色
         // 如果是 writer 角色，则将文章的审核状态修改为 "未审核"（假设未审核是 0）
-        if (StpUtil.hasRole("writer")) {
+
+        if (StpUtil.getTokenSession().get("UserRole").equals("writer")) {
             article.setReviewStatus(0);  // 0 假设是未审核状态
         }
         articleMapper.updateById(article);

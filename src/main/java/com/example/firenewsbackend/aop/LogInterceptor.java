@@ -2,7 +2,10 @@ package com.example.firenewsbackend.aop;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.example.firenewsbackend.mapper.LogMapper;
+import com.example.firenewsbackend.model.entity.Article;
+import com.example.firenewsbackend.model.entity.Comments;
 import com.example.firenewsbackend.model.entity.Log;
+import com.example.firenewsbackend.model.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -30,6 +33,8 @@ public class LogInterceptor {
 
     @Resource
     private LogMapper logMapper;
+
+    private static final int MAX_NAME_LENGTH = 155;
 
     /**
      * 执行拦截
@@ -83,9 +88,13 @@ public class LogInterceptor {
 
         // 记录日志
         Log logRecord = new Log();
-        logRecord.setName(operationName + Arrays.toString(args));
+        String targetInfo = getTargetInfo(targetType, args);
+        if (targetInfo.length() > MAX_NAME_LENGTH) {
+            targetInfo = targetInfo.substring(0, MAX_NAME_LENGTH);
+        }
+        logRecord.setName(operationName + "-" + targetInfo);
         logRecord.setUserAccount(userAccount);
-        logRecord.setCreateTime(String.valueOf(LocalDateTime.now()));
+        logRecord.setCreateTime((LocalDateTime.now()));
         logRecord.setActionType(actionType);
         logRecord.setTargetType(targetType);
         logRecord.setTargetId(getTargetId(targetType, args));
@@ -102,17 +111,42 @@ public class LogInterceptor {
     /**
      * 获取目标ID
      */
-    private String getTargetId(String url, Object[] args) {
-        System.out.println(Arrays.toString(args));
+    private Long getTargetId(String url, Object[] args) {
+        System.out.println("获取目标参数: " + Arrays.toString(args));
         // 通过URL和参数来获取目标ID（如文章ID、评论ID等）
         if (url.contains("/addArticle")) {
-            return (String) args[0];  // 假设文章对象在参数中，第一个参数是文章ID
+            // 如果是新增文章操作，目标ID为文章的ID
+            return (((Article) args[0]).getId());  // 假设args[0]是Article对象
         } else if (url.contains("/comment")) {
-            return (String) args[1];  // 假设评论的文章ID是第二个参数
-        }else if (url.contains("/user")) {
-            return (String) args[0];
+            // 如果是评论操作，目标ID为评论的ID或文章ID
+            Comments comment = (Comments) args[0];
+            System.out.println(comment.getArticleId());
+            return (comment.getArticleId());  // 假设args[0]是Comments对象，可以根据需要修改
+        } else if (url.contains("/user")) {
+            // 如果是用户操作，目标ID为用户ID
+            User user = (User) args[0];
+            return (user.getId());  // 假设args[0]是User对象，可以根据需要修改
+        } else if (url.contains("/admin")) {
+            return Long.valueOf("admin");
         }
         return null;
+    }
+
+    /**
+     * 获取目标信息（如文章标题、评论内容等）
+     */
+    private String getTargetInfo(String targetType, Object[] args) {
+        if (targetType.equals("article") && args[0] instanceof Article) {
+            Article article = (Article) args[0];
+            return article.getArticleTitle(); // 返回文章标题
+        } else if (targetType.equals("comment") && args[0] instanceof Comments) {
+            Comments comment = (Comments) args[0];
+            return comment.getContent(); // 返回评论内容
+        } else if (targetType.equals("user") && args[0] instanceof User) {
+            User user = (User) args[0];
+            return user.getUserName(); // 返回用户名
+        }
+        return "未知目标";
     }
 
 }

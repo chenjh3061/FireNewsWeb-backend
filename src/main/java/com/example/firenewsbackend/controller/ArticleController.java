@@ -178,7 +178,7 @@ public class ArticleController {
      */
     @LoggableOperation(operationName = "发布文章", actionType = "publish", targetType = "article")
     @PostMapping("/addArticle")
-    public BaseResponse<Article> addArticle(Article article){
+    public BaseResponse<Article> addArticle(@RequestBody Article article){
         StpUtil.checkRoleOr("admin","writer");
         return ResultUtils.success(articleService.addArticle(article));
     }
@@ -218,6 +218,7 @@ public class ArticleController {
         }
         article.setReviewStatus(reviewStatus);
         article.setReviewMessage(reviewMessage);
+        System.out.println("文章："+article);
         return ResultUtils.success(articleService.updateArticle(article));
     }
 
