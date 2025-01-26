@@ -5,10 +5,9 @@ import com.example.firenewsbackend.common.BaseResponse;
 import com.example.firenewsbackend.common.ResultUtils;
 import com.example.firenewsbackend.model.entity.Notion;
 import com.example.firenewsbackend.service.NotionService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -19,6 +18,9 @@ public class NotionController {
     @Resource
     private NotionService notionService;
 
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
     @GetMapping("/getAllNotion")
     public BaseResponse<List<Notion>> getAllNotion(){
         StpUtil.checkRole("admin");
@@ -26,21 +28,24 @@ public class NotionController {
     }
 
     @PostMapping("/addNotion")
-    public BaseResponse<Notion> addNotion(Notion notion){
+    public BaseResponse<Notion> addNotion(@RequestBody Notion notion){
         StpUtil.checkRole("admin");
-        return ResultUtils.success(notionService.addNotion(notion));
+        Notion addedNotion = notionService.addNotion(notion);
+        messagingTemplate.convertAndSend("/topic/notion", addedNotion);
+        return ResultUtils.success(addedNotion);
     }
 
     @PostMapping("/updateNotion")
-    public BaseResponse<Notion> updateNotion(Notion notion){
+    public BaseResponse<Notion> updateNotion(@RequestBody Notion notion){
         StpUtil.checkRole("admin");
-        return ResultUtils.success(notionService.updateNotion(notion));
+        Notion updatedNotion = notionService.updateNotion(notion);
+        messagingTemplate.convertAndSend("/topic/notion", updatedNotion);
+        return ResultUtils.success(updatedNotion);
     }
 
     @PostMapping("/deleteNotion")
-    public BaseResponse<Notion> deleteNotion(Integer id){
+    public BaseResponse<Notion> deleteNotion(@RequestParam Integer id){
         StpUtil.checkRole("admin");
         return ResultUtils.success(notionService.deleteNotion(id));
     }
-
 }
