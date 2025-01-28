@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.List;
 
 @Configuration
-@ConfigurationProperties(prefix = "ai")
+@ConfigurationProperties(prefix = "ai.zhipuai")
 @Data
 public class AiConfig {
 

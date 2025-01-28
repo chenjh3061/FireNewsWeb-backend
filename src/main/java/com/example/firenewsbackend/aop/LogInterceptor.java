@@ -1,5 +1,6 @@
 package com.example.firenewsbackend.aop;
 
+import cn.dev33.satoken.interceptor.SaInterceptor;
 import cn.dev33.satoken.stp.StpUtil;
 import com.example.firenewsbackend.mapper.LogMapper;
 import com.example.firenewsbackend.model.entity.Article;
@@ -11,11 +12,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -23,12 +28,10 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.UUID;
 
-/**
- * 请求响应日志 AOP
- **/
 @Aspect
 @Component
 @Slf4j
+@Order(1) // 值越大，优先级越低
 public class LogInterceptor {
 
     @Resource

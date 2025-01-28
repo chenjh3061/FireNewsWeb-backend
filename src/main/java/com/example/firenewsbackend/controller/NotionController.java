@@ -18,9 +18,6 @@ public class NotionController {
     @Resource
     private NotionService notionService;
 
-    @Autowired
-    private SimpMessagingTemplate messagingTemplate;
-
     @GetMapping("/getAllNotion")
     public BaseResponse<List<Notion>> getAllNotion(){
         StpUtil.checkRole("admin");
@@ -31,7 +28,7 @@ public class NotionController {
     public BaseResponse<Notion> addNotion(@RequestBody Notion notion){
         StpUtil.checkRole("admin");
         Notion addedNotion = notionService.addNotion(notion);
-        messagingTemplate.convertAndSend("/topic/notion", addedNotion);
+        //messagingTemplate.convertAndSend("/topic/notion", addedNotion);
         return ResultUtils.success(addedNotion);
     }
 
@@ -39,7 +36,6 @@ public class NotionController {
     public BaseResponse<Notion> updateNotion(@RequestBody Notion notion){
         StpUtil.checkRole("admin");
         Notion updatedNotion = notionService.updateNotion(notion);
-        messagingTemplate.convertAndSend("/topic/notion", updatedNotion);
         return ResultUtils.success(updatedNotion);
     }
 

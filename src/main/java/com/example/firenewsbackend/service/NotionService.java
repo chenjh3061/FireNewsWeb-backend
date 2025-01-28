@@ -15,20 +15,20 @@ public class NotionService {
     private NotionMapper notionMapper;
 
     private final List<Notion> notions = new ArrayList<>();
-    private final AtomicInteger idGenerator = new AtomicInteger(1);
+    //private final AtomicInteger idGenerator = new AtomicInteger(1);
 
     public List<Notion> getAllNotion() {
         return notionMapper.selectList(null);
     }
 
     public Notion addNotion(Notion notion) {
-        notion.setId(idGenerator.getAndIncrement());
-        notions.add(notion);
+//        notion.setId(idGenerator.getAndIncrement());
+//        notions.add(notion);
         return notionMapper.addNotion(notion);
     }
 
     public Notion updateNotion(Notion notion) {
-        notions.replaceAll(n -> n.getId().equals(notion.getId()) ? notion : n);
+       // notions.replaceAll(n -> n.getId().equals(notion.getId()) ? notion : n);
         return notionMapper.updateNotion(notion);
     }
 

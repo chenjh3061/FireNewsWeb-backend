@@ -15,6 +15,11 @@ spring:
       matching-strategy: ANT_PATH_MATCHER
   session:
     store-type: none
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+      enabled: true
   web:
     resources:
       static-locations: classpath:/static/uploads/
@@ -59,9 +64,10 @@ knife4j:
 
 # 智谱ai配置
 ai:
-  apiKey: cd3e9fa7f67988e4c4a87e6adaad7d4f.tXpGrIlHvyIoqIlL
-  base-url: https://open.bigmodel.cn/api/paas/v4/chat/completions
-  chat: enabled:true
+  zhipuai:
+    apiKey: dbab623cfaca4418b7ad281ee255950f.02OPFKMueSnLHI88
+    base-url: https://open.bigmodel.cn/api/paas/v4/chat/completions
+    chat: enabled:true
 
 
 ############## Sa-Token 配置 (文档: https://sa-token.cc) ##############

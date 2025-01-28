@@ -50,9 +50,10 @@ public class UploadController {
 
     @Operation(summary = "上传图片到本地")
     @PostMapping("/img")
-    public BaseResponse<?> upload(MultipartFile file) {
+    public BaseResponse<?> upload(@RequestParam("file") MultipartFile file) {
         StpUtil.checkLogin();
-        if (file.isEmpty()) {
+        if (file == null) {
+            System.out.println("文件情况："+file);
             return ResultUtils.error(ErrorCode.PARAMS_ERROR, "file is empty");
         } else if (file.getSize() > 4096 * 4096) {
             return ResultUtils.error(ErrorCode.PARAMS_ERROR, "file size is too large");
@@ -89,6 +90,7 @@ public class UploadController {
     @Operation(summary = "下载图片")
     @GetMapping("/download")
     public ResponseEntity<Resource> download(@RequestParam("filePath") String filePath) {
+        StpUtil.checkLogin();
         try {
             // 定义文件存储的根路径
             ApplicationHome applicationHome = new ApplicationHome(this.getClass());
@@ -121,6 +123,7 @@ public class UploadController {
     @Operation(summary = "上传文档文件并解析为HTML")
     @PostMapping("/document")
     public BaseResponse<?> uploadAndParse(@RequestParam("file") MultipartFile file) {
+        StpUtil.checkLogin();
         if (file.isEmpty()) {
             return ResultUtils.error(ErrorCode.PARAMS_ERROR, "文件为空");
         }

@@ -42,7 +42,7 @@ public class AiManager {
 
         // 构造 AI 请求参数
         ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
-                .model(Constants.ModelChatGLM4)  // 使用GLM-4模型
+                .model("glm-4-flash")  // 使用GLM-4模型
                 .temperature(0.05f)  // 可调节温度参数
                 .stream(Boolean.FALSE)
                 .invokeMethod(Constants.invokeMethod)
@@ -106,7 +106,7 @@ public class AiManager {
     public String doRequest(List<ChatMessage> messages, Float temperature) {
         // 构建请求
         ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
-                .model(Constants.ModelChatGLM4)
+                .model("glm-4-flash")
                 .temperature(temperature)
                 .messages(messages)
                 .stream(Boolean.FALSE)
