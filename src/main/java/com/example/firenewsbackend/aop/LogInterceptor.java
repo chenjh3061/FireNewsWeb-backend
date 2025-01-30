@@ -117,7 +117,7 @@ public class LogInterceptor {
     private Long getTargetId(String url, Object[] args) {
         System.out.println("获取目标参数: " + Arrays.toString(args));
         // 通过URL和参数来获取目标ID（如文章ID、评论ID等）
-        if (url.contains("/addArticle")) {
+        if (url.contains("/article")) {
             // 如果是新增文章操作，目标ID为文章的ID
             return (((Article) args[0]).getId());  // 假设args[0]是Article对象
         } else if (url.contains("/comment")) {

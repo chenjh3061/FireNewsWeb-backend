@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -199,4 +200,10 @@ public interface ArticleMapper extends BaseMapper<Article> {
 
     @Select("select * from article where createTime > #{fiveMinutesAgoDate} and isDelete = 0")
     List<Article> listArticleWithDelete(Date fiveMinutesAgoDate);
+
+    @Select("SELECT id, COUNT(*) AS view_count " +
+            "FROM article " +
+            "WHERE createTime > #{sevenDaysAgo} " +
+            "GROUP BY id")
+    List<ArticleDTO> getArticleStatsForLastSevenDays(LocalDateTime sevenDaysAgo);
 }

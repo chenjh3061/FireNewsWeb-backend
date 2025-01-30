@@ -18,6 +18,7 @@ public class ArticleDTO {
 
     private Integer reviewStatus;
     private String reviewMessage;
+    private Long reviewerId;
     private Integer isCarousel;
     private LocalDateTime createTime;
     private LocalDateTime  updateTime;

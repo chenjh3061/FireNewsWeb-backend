@@ -21,6 +21,7 @@ import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -208,5 +209,12 @@ public class ArticleService {
 
     public List<Article> getArticles() {
         return articleMapper.selectList(null);
+    }
+
+    public List<ArticleDTO> getArticleStatsForLastSevenDays() {
+        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
+
+        // 获取近七天内发布的文章，并统计浏览量
+        return articleMapper.getArticleStatsForLastSevenDays(sevenDaysAgo);
     }
 }

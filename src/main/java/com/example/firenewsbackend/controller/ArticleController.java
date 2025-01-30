@@ -218,6 +218,8 @@ public class ArticleController {
         }
         article.setReviewStatus(reviewStatus);
         article.setReviewMessage(reviewMessage);
+        Long adminId = StpUtil.getLoginIdAsLong();
+        article.setReviewerId(adminId);
         System.out.println("文章："+article);
         return ResultUtils.success(articleService.updateArticle(article));
     }
@@ -241,6 +243,15 @@ public class ArticleController {
     public BaseResponse<ArticleDTO> recordArticleView(@RequestParam Long articleId, @RequestParam Long userId) {
         StpUtil.checkLogin();
         return ResultUtils.success(articleService.recordArticleView(articleId, userId));
+    }
+
+    /**
+     * 统计近七天的文章浏览量和发布情况
+     */
+    @GetMapping("/getArticleStatsForLastSevenDays")
+    public BaseResponse<List<ArticleDTO>> getArticleStatsForLastSevenDays() {
+        List<ArticleDTO> articleStats = articleService.getArticleStatsForLastSevenDays();
+        return ResultUtils.success(articleStats);
     }
 
 }
