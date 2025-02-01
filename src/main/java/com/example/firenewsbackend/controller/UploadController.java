@@ -50,10 +50,11 @@ public class UploadController {
 
     @Operation(summary = "上传图片到本地")
     @PostMapping("/img")
-    public BaseResponse<?> upload(@RequestParam("file") MultipartFile file) {
+    public BaseResponse<?> upload(MultipartFile file) {
         StpUtil.checkLogin();
+        System.out.println("文件情况："+file);
         if (file == null) {
-            System.out.println("文件情况："+file);
+
             return ResultUtils.error(ErrorCode.PARAMS_ERROR, "file is empty");
         } else if (file.getSize() > 4096 * 4096) {
             return ResultUtils.error(ErrorCode.PARAMS_ERROR, "file size is too large");

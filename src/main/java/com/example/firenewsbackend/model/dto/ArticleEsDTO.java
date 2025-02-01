@@ -26,12 +26,14 @@ import java.util.List;
 @Data
 public class ArticleEsDTO implements Serializable {
 
-    private static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    private static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 
     @Id
     private Long articleId;   // 文章ID
 
+    @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_smart")
     private String articleTitle;   // 文章标题
+    @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_smart")
     private String articleContent; // 文章内容
     private String articleDesc;    // 文章简介
     private String articleAvatar;  // 文章封面
