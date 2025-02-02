@@ -141,7 +141,11 @@ public class LogInterceptor {
     private String getTargetInfo(String targetType, Object[] args) {
         if (targetType.equals("article") && args[0] instanceof Article) {
             Article article = (Article) args[0];
-            return article.getArticleTitle(); // 返回文章标题
+            if (article.getArticleTitle() != null) {
+                return article.getArticleTitle(); // 返回文章标题
+            } else {
+                return article.getId().toString();
+            }
         } else if (targetType.equals("comment") && args[0] instanceof Comments) {
             Comments comment = (Comments) args[0];
             return comment.getContent(); // 返回评论内容
