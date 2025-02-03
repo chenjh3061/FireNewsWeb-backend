@@ -1,6 +1,7 @@
 package com.example.firenewsbackend.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.example.firenewsbackend.aop.LoggableOperation;
 import com.example.firenewsbackend.common.BaseResponse;
 import com.example.firenewsbackend.common.ErrorCode;
 import com.example.firenewsbackend.common.ResultUtils;
@@ -70,6 +71,7 @@ public class UploadController {
     //    }
 
     @Operation(summary = "上传图片到本地")
+    @LoggableOperation(operationName = "上传图片", actionType = "add", targetType = "img")
     @PostMapping("/img")
     public BaseResponse<?> upload(MultipartFile file) {
         StpUtil.checkLogin();
@@ -143,6 +145,7 @@ public class UploadController {
     }
 
     @Operation(summary = "上传文档文件并解析为HTML")
+    @LoggableOperation(operationName = "上传文件", actionType = "add", targetType = "doc")
     @PostMapping("/document")
     public BaseResponse<?> uploadAndParse(@RequestParam("file") MultipartFile file) {
 //        StpUtil.checkLogin();

@@ -5,6 +5,7 @@ import com.example.firenewsbackend.model.entity.Notion;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.management.Notification;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -15,20 +16,16 @@ public class NotionService {
     private NotionMapper notionMapper;
 
     private final List<Notion> notions = new ArrayList<>();
-    //private final AtomicInteger idGenerator = new AtomicInteger(1);
 
     public List<Notion> getAllNotion() {
         return notionMapper.selectList(null);
     }
 
     public Notion addNotion(Notion notion) {
-//        notion.setId(idGenerator.getAndIncrement());
-//        notions.add(notion);
         return notionMapper.addNotion(notion);
     }
 
     public Notion updateNotion(Notion notion) {
-       // notions.replaceAll(n -> n.getId().equals(notion.getId()) ? notion : n);
         return notionMapper.updateNotion(notion);
     }
 
@@ -36,6 +33,17 @@ public class NotionService {
         Notion notion = new Notion();
         notion.setId(id);
         notion.setIsDelete(1);
-        return notionMapper.updateNotion(notion);
+        return notionMapper.updateById(notion) > 0 ? notion : null;
+    }
+
+    public List<Notion> getActiveNotifications(String userId) {
+        // 获取有效的通知
+        return notionMapper.getActiveNotifications(userId);
+    }
+
+    public void markAsRead(Integer id) {
+        // 标记通知为已读
+        notionMapper.markAsRead(id);
     }
 }
+
