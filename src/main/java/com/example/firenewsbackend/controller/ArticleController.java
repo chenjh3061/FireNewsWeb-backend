@@ -24,6 +24,7 @@ public class ArticleController {
 
     @Resource
     private ArticleService articleService;
+    private String searchParams;
 
     /**
      * 获取所有文章
@@ -68,8 +69,14 @@ public class ArticleController {
     }
 
     @GetMapping("/searchArticle")
-    public BaseResponse<List<ArticleDTO>> searchArticle(@RequestParam String searchParams) {
-        return ResultUtils.success(articleService.searchArticle(searchParams));
+    public BaseResponse<Object> searchArticle(@RequestParam String searchParams,
+                                              @RequestParam(defaultValue = "0") int page,
+                                              @RequestParam(defaultValue = "20") int size) {
+        return ResultUtils.success(articleService.searchArticle(searchParams, page, size), articleService.total);
+    }
+    @GetMapping("/getTotalSearchResults")
+    public BaseResponse<Long> getTotalSearchResults() {
+        return ResultUtils.success(articleService.total);
     }
 
 

@@ -19,7 +19,6 @@ public class Notion {
     private LocalDateTime endTime;
     private String userId;
     private String status;
-    private String domain;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
     @TableLogic

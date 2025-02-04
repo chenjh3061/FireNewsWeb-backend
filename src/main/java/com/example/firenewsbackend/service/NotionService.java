@@ -41,9 +41,9 @@ public class NotionService {
         return notionMapper.getActiveNotifications(userId);
     }
 
-    public void markAsRead(Integer id) {
+    public Notion markAsRead(Integer id) {
         // 标记通知为已读
-        notionMapper.markAsRead(id);
+        return notionMapper.markAsRead(id);
     }
 }
 

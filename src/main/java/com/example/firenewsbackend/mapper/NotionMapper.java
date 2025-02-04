@@ -34,5 +34,5 @@ public interface NotionMapper extends BaseMapper<Notion> {
     List<Notion> getActiveNotifications(@Param("userId") String userId);
 
     @Update("UPDATE notification SET status = 0 WHERE id = #{id}")
-    void markAsRead(@Param("id") Integer id);
+    Notion markAsRead(@Param("id") Integer id);
 }

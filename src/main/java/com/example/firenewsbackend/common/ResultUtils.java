@@ -13,6 +13,19 @@ public class ResultUtils {
         return new BaseResponse<>(0, data, "ok");
     }
 
+
+    /**
+     * 成功
+     *
+     * @param data 数据
+     * @param <T>  数据类型
+     * @return 响应
+     */
+    public static <T> BaseResponse<T> success(T data, T total) {
+        return new BaseResponse<>(0, data, total.toString());
+    }
+
+
     /**
      * 失败
      *

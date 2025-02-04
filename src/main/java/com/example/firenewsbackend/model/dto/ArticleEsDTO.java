@@ -35,7 +35,9 @@ public class ArticleEsDTO implements Serializable {
     private String articleTitle;   // 文章标题
     @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_smart")
     private String articleContent; // 文章内容
+    @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_smart")
     private String articleDesc;    // 文章简介
+    @Field(type = FieldType.Text)
     private String articleAvatar;  // 文章封面
     private Integer articleCategory; // 分类
 
@@ -63,6 +65,8 @@ public class ArticleEsDTO implements Serializable {
         articleEsDTO.setArticleId(article.getId());
         articleEsDTO.setArticleTitle(article.getArticleTitle());
         articleEsDTO.setArticleContent(article.getArticleContent());
+        articleEsDTO.setArticleDesc(article.getArticleDesc());
+        articleEsDTO.setArticleAvatar(article.getArticleAvatar());
         // 其他字段类似处理
         if (article.getTags() != null) {
             articleEsDTO.setTags(Arrays.asList(article.getTags().split(",")));

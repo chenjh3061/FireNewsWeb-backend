@@ -179,7 +179,9 @@ public class ArticleService {
     @Resource
     private ElasticsearchRestTemplate elasticsearchRestTemplate;
 
-    public List<ArticleDTO> searchArticle(String searchParams) {
+    public long total ;
+
+    public List<ArticleDTO> searchArticle(String searchParams, int pageNo, int pageSize) {
         // 使用 Criteria 构建查询条件
         Criteria criteria = new Criteria();
         // 使用 contains 方法实现模糊搜索，也可以使用 wildcard 方法
@@ -190,7 +192,7 @@ public class ArticleService {
         // 这里使用 CriteriaQuery
         CriteriaQuery searchQuery = new CriteriaQuery(criteria);
         // 设置分页
-        searchQuery.setPageable(PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "createTime")));
+        searchQuery.setPageable(PageRequest.of(pageNo, pageSize, Sort.by(Sort.Direction.DESC, "_score")));
 
         // 执行搜索操作
         SearchHits<ArticleEsDTO> searchHits = elasticsearchRestTemplate.search(searchQuery, ArticleEsDTO.class);
@@ -203,7 +205,7 @@ public class ArticleService {
             ArticleDTO articleDTO = ArticleEsDTO.dtoToObj(articleEsDTO);
             result.add(articleDTO);
         }
-
+        total = elasticsearchRestTemplate.count(searchQuery, ArticleEsDTO.class);
         return result;
     }
 

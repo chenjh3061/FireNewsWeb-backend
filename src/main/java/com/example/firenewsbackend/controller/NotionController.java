@@ -5,14 +5,11 @@ import com.example.firenewsbackend.common.BaseResponse;
 import com.example.firenewsbackend.common.ResultUtils;
 import com.example.firenewsbackend.model.entity.Notion;
 import com.example.firenewsbackend.service.NotionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.annotation.Resource;
-import javax.management.Notification;
 import java.util.List;
 
 @RestController
@@ -70,7 +67,7 @@ public class NotionController {
     @PostMapping("/markAsRead")
     public BaseResponse<?> markAsRead(@RequestParam Integer id) {
         StpUtil.checkRole("admin");
-        notionService.markAsRead(id);
-        return ResultUtils.success("已读");
+
+        return ResultUtils.success(notionService.markAsRead(id));
     }
 }
