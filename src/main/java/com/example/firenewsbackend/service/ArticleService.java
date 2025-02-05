@@ -18,6 +18,7 @@ import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.Criteria;
 import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
 import org.springframework.data.elasticsearch.core.query.Query;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -181,32 +182,50 @@ public class ArticleService {
 
     public long total ;
 
+    @Resource
+    private JdbcTemplate jdbcTemplate;
+
     public List<ArticleDTO> searchArticle(String searchParams, int pageNo, int pageSize) {
-        // 使用 Criteria 构建查询条件
-        Criteria criteria = new Criteria();
-        // 使用 contains 方法实现模糊搜索，也可以使用 wildcard 方法
-        criteria = criteria.or("articleTitle").matches(searchParams)
-                .or("articleContent").matches(searchParams);
+        try {
+            // 使用 Criteria 构建查询条件
+            Criteria criteria = new Criteria();
+            // 使用 contains 方法实现模糊搜索，也可以使用 wildcard 方法
+            criteria = criteria.or("articleTitle").matches(searchParams)
+                    .or("articleContent").matches(searchParams);
 
-        // 使用 CriteriaQuery 或 NativeSearchQueryBuilder 构建查询
-        // 这里使用 CriteriaQuery
-        CriteriaQuery searchQuery = new CriteriaQuery(criteria);
-        // 设置分页
-        searchQuery.setPageable(PageRequest.of(pageNo, pageSize, Sort.by(Sort.Direction.DESC, "_score")));
+            // 使用 CriteriaQuery 或 NativeSearchQueryBuilder 构建查询
+            // 这里使用 CriteriaQuery
+            CriteriaQuery searchQuery = new CriteriaQuery(criteria);
+            // 设置分页
+            searchQuery.setPageable(PageRequest.of(pageNo, pageSize, Sort.by(Sort.Direction.DESC, "_score")));
 
-        // 执行搜索操作
-        SearchHits<ArticleEsDTO> searchHits = elasticsearchRestTemplate.search(searchQuery, ArticleEsDTO.class);
+            // 执行搜索操作
+            SearchHits<ArticleEsDTO> searchHits = elasticsearchRestTemplate.search(searchQuery, ArticleEsDTO.class);
 
-        // 处理搜索结果
-        List<ArticleDTO> result = new ArrayList<>();
-        for (SearchHit<ArticleEsDTO> hit : searchHits) {
-            ArticleEsDTO articleEsDTO = hit.getContent();
-            // 这里假设你有一个方法可以将 ArticleEsDTO 转换为 ArticleDTO
-            ArticleDTO articleDTO = ArticleEsDTO.dtoToObj(articleEsDTO);
-            result.add(articleDTO);
+            // 处理搜索结果
+            List<ArticleDTO> result = new ArrayList<>();
+            for (SearchHit<ArticleEsDTO> hit : searchHits) {
+                ArticleEsDTO articleEsDTO = hit.getContent();
+                // 这里假设你有一个方法可以将 ArticleEsDTO 转换为 ArticleDTO
+                ArticleDTO articleDTO = ArticleEsDTO.dtoToObj(articleEsDTO);
+                result.add(articleDTO);
+            }
+            total = elasticsearchRestTemplate.count(searchQuery, ArticleEsDTO.class);
+            return result;
+        } catch (Exception e) {
+            logger.error("Error while searching articles: {}", e.getMessage());
+            String sql = "SELECT * FROM articles WHERE article_title LIKE ? OR article_content LIKE ? LIMIT ? OFFSET ?";
+            String likeParam = "%" + searchParams + "%";
+            int offset = pageNo * pageSize;
+            return jdbcTemplate.query(sql, new Object[]{likeParam, likeParam, pageSize, offset}, (rs, rowNum) -> {
+                ArticleDTO article = new ArticleDTO();
+                article.setArticleId(rs.getLong("id"));
+                article.setArticleTitle(rs.getString("article_title"));
+                article.setArticleContent(rs.getString("article_content"));
+                return article;
+            });
         }
-        total = elasticsearchRestTemplate.count(searchQuery, ArticleEsDTO.class);
-        return result;
+
     }
 
     public List<Article> getArticles() {

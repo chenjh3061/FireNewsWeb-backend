@@ -2,48 +2,62 @@ package com.example.firenewsbackend.service;
 
 import com.example.firenewsbackend.mapper.NotionMapper;
 import com.example.firenewsbackend.model.entity.Notion;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import javax.management.Notification;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class NotionService {
-    @Resource
-    private NotionMapper notionMapper;
+    private final NotionMapper notionMapper;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    private final List<Notion> notions = new ArrayList<>();
+    // 构造函数注入
+    public NotionService(NotionMapper notionMapper, SimpMessagingTemplate messagingTemplate) {
+        this.notionMapper = notionMapper;
+        this.messagingTemplate = messagingTemplate;
+    }
 
     public List<Notion> getAllNotion() {
         return notionMapper.selectList(null);
     }
 
     public Notion addNotion(Notion notion) {
-        return notionMapper.addNotion(notion);
+        Notion addedNotion = notionMapper.addNotion(notion);
+        // 发送新通知给所有订阅用户
+        sendNotification(addedNotion);
+        return addedNotion;
     }
 
     public Notion updateNotion(Notion notion) {
-        return notionMapper.updateNotion(notion);
+        Notion updatedNotion = notionMapper.updateNotion(notion);
+        // 发送更新后的通知给所有订阅用户
+        sendNotification(updatedNotion);
+        return updatedNotion;
     }
 
     public Notion deleteNotion(Integer id) {
         Notion notion = new Notion();
         notion.setId(id);
         notion.setIsDelete(1);
-        return notionMapper.updateById(notion) > 0 ? notion : null;
+        if (notionMapper.updateById(notion) > 0) {
+            // 发送删除通知给所有订阅用户
+            sendNotification(notion);
+            return notion;
+        }
+        return null;
     }
 
     public List<Notion> getActiveNotifications(String userId) {
-        // 获取有效的通知
         return notionMapper.getActiveNotifications(userId);
     }
 
     public Notion markAsRead(Integer id) {
-        // 标记通知为已读
         return notionMapper.markAsRead(id);
+    }
+
+    private void sendNotification(Notion notion) {
+        messagingTemplate.convertAndSend("/topic/notifications", notion);
     }
 }
 

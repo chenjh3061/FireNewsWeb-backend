@@ -5,9 +5,7 @@ import com.example.firenewsbackend.common.BaseResponse;
 import com.example.firenewsbackend.common.ResultUtils;
 import com.example.firenewsbackend.model.entity.Notion;
 import com.example.firenewsbackend.service.NotionService;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -22,26 +20,6 @@ public class NotionController {
     public BaseResponse<List<Notion>> getAllNotion() {
         StpUtil.checkRole("admin");
         return ResultUtils.success(notionService.getAllNotion());
-    }
-
-    @GetMapping("/sse/notifications")
-    public SseEmitter getNotifications(@RequestParam String userId) {
-        SseEmitter emitter = new SseEmitter();
-        try {
-            // 获取有效的通知
-            List<Notion> notifications = notionService.getActiveNotifications(userId);
-
-            for (Notion notification : notifications) {
-                // 推送每个通知
-                emitter.send(notification, MediaType.APPLICATION_JSON);
-            }
-
-            // 完成推送
-            emitter.complete();
-        } catch (Exception e) {
-            emitter.completeWithError(e);
-        }
-        return emitter;
     }
 
     @PostMapping("/addNotion")
@@ -67,7 +45,6 @@ public class NotionController {
     @PostMapping("/markAsRead")
     public BaseResponse<?> markAsRead(@RequestParam Integer id) {
         StpUtil.checkRole("admin");
-
         return ResultUtils.success(notionService.markAsRead(id));
     }
 }
