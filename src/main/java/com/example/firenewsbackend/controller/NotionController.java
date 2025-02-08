@@ -7,19 +7,27 @@ import com.example.firenewsbackend.model.entity.Notion;
 import com.example.firenewsbackend.service.NotionService;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
 @RequestMapping("/notion")
 public class NotionController {
-    @Resource
-    private NotionService notionService;
+    private final NotionService notionService;
+
+    public NotionController(NotionService notionService) {
+        this.notionService = notionService;
+    }
 
     @GetMapping("/getAllNotion")
     public BaseResponse<List<Notion>> getAllNotion() {
         StpUtil.checkRole("admin");
         return ResultUtils.success(notionService.getAllNotion());
+    }
+
+    // 获取所有用户的当前生效公告
+    @GetMapping("/active")
+    public List<Notion> getActiveNotifications() {
+        return notionService.getAllActiveNotifications();
     }
 
     @PostMapping("/addNotion")
@@ -32,8 +40,7 @@ public class NotionController {
     @PostMapping("/updateNotion")
     public BaseResponse<Notion> updateNotion(@RequestBody Notion notion) {
         StpUtil.checkRole("admin");
-        Notion updatedNotion = notionService.updateNotion(notion);
-        return ResultUtils.success(updatedNotion);
+        return ResultUtils.success(notionService.updateNotion(notion));
     }
 
     @PostMapping("/deleteNotion")

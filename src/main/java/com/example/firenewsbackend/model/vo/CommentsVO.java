@@ -29,6 +29,8 @@ public class CommentsVO {
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
+    private LocalDateTime updateTime;
+
     private String content; // 评论内容
 
     private Integer likes; // 点赞数

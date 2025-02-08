@@ -1,5 +1,6 @@
 package com.example.firenewsbackend.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.firenewsbackend.aop.LoggableOperation;
 import com.example.firenewsbackend.common.BaseResponse;
 import com.example.firenewsbackend.common.ResultUtils;
@@ -27,11 +28,26 @@ public class CommentController {
         return ResultUtils.success(commentService.getAllComments());
     }
 
+    @GetMapping("/getAllCommentsByPage")
+    public BaseResponse<List<CommentsVO>> getAllCommentsByPage(@RequestParam(defaultValue = "1") int page,
+                                                               @RequestParam(defaultValue = "20") int size){
+        return ResultUtils.success(commentService.getAllCommentsByPage(page,size).getRecords());
+    }
+
     @GetMapping("/getCommentsByArticleId")
     public BaseResponse<List<CommentsVO>> getCommentsByArticleId(@RequestParam Long id,
                                                                  @RequestParam(defaultValue = "1") int page,
                                                                 @RequestParam(defaultValue = "10") int size){
         return ResultUtils.success(commentService.getAllCommentsByArticleId(id,page,size).getRecords());
+    }
+
+    @GetMapping("/searchCommentsByPage")
+    public BaseResponse<List<CommentsVO>> getAllCommentsByPage(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String keyword) {
+        Page<CommentsVO> commentsVOPage = commentService.searchCommentsByPage(page, size, keyword);
+        return ResultUtils.success(commentsVOPage.getRecords());
     }
 
     /**
@@ -55,5 +71,10 @@ public class CommentController {
     @PostMapping("/changeCommentStatus")
     public BaseResponse<CommentsVO> changeCommentStatus(@RequestParam Long id, @RequestParam Integer status){
         return ResultUtils.success(commentService.changeCommentStatus(id, status));
+    }
+
+    @DeleteMapping("/deleteCommentById")
+    public BaseResponse<Integer> deleteCommentById(@RequestParam Long id){
+        return ResultUtils.success(commentService.deleteCommentById(id));
     }
 }
