@@ -18,5 +18,8 @@ public class Log {
     private String actionType;
     private String targetType;
     private Long targetId;
-    private String ip;
+    private String requestMethod;
+    private String requestPath;
+    private String requestIP;
+    private String params;
 }

@@ -1,5 +1,6 @@
 package com.example.firenewsbackend.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.firenewsbackend.mapper.LogMapper;
 import com.example.firenewsbackend.model.entity.Log;
 import com.example.firenewsbackend.repository.LogEntry;
@@ -63,8 +64,15 @@ public class LogService {
         return result;
     }
 
-    public List<Log> getRecentLog(int limit) {
-        return logMapper.findRecentLogs(limit);
+    public List<Log> getRecentLog(int page, int size) {
+        // 创建分页对象，传入当前页和每页记录数
+        Page<Log> pageRequest = new Page<>(page, size);
+
+        // 调用 Mapper 进行分页查询
+        Page<Log> result = logMapper.findRecentLogs(pageRequest);
+
+        // 返回查询结果
+        return result.getRecords();
     }
 }
 

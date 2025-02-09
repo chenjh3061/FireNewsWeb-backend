@@ -61,10 +61,9 @@ public class AdminController {
     }
 
     @GetMapping("/getRecentLog")
-    public BaseResponse<List<Log>> getRecentLog(){
+    public BaseResponse<List<Log>> getRecentLog(@RequestParam int page, @RequestParam int size){
         StpUtil.checkRole("admin");
-        int limit = 10;
-        return ResultUtils.success(logService.getRecentLog(limit));
+        return ResultUtils.success(logService.getRecentLog(page,size));
     }
 
     // 获取文件列表

@@ -26,6 +26,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.UUID;
 
 @Aspect
@@ -47,25 +48,46 @@ public class LogInterceptor {
         // 计时
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        // 获取请求路径
+
+        // 获取请求路径、请求方式、请求IP
         RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
         HttpServletRequest httpServletRequest = ((ServletRequestAttributes) requestAttributes).getRequest();
-        // 生成请求唯一 id
+
         String requestId = UUID.randomUUID().toString();
         String url = httpServletRequest.getRequestURI();
+        String method = httpServletRequest.getMethod(); // 请求方法
+        String clientIP = httpServletRequest.getRemoteHost(); // 请求IP
+
         // 获取请求参数
         Object[] args = point.getArgs();
         String reqParam = "[" + StringUtils.join(args, ", ") + "]";
 
         // 输出请求日志
-        log.info("request start，id: {}, path: {}, ip: {}, params: {}", requestId, url,
-                httpServletRequest.getRemoteHost(), reqParam);
+        log.info("request start, id: {}, path: {}, method: {}, ip: {}, params: {}", requestId, url, method,
+                clientIP, reqParam);
+
+        // 创建日志记录对象
+        Log logRecord = new Log();
+        logRecord.setRequestMethod(method);
+        logRecord.setRequestPath(url);
+        logRecord.setRequestIP(clientIP);
+        logRecord.setParams(reqParam);
+
+        // 给 name 字段赋值，避免插入时为 null
+        logRecord.setName("Request: " + method + " " + url);
+
+        // 获取用户信息
+        String userAccount = StpUtil.isLogin() ? StpUtil.getTokenSession().get("UserAccount").toString() : "未登录";
+        logRecord.setUserAccount(userAccount);
+
         // 执行原方法
         Object result = point.proceed();
+
         // 输出响应日志
         stopWatch.stop();
         long totalTimeMillis = stopWatch.getTotalTimeMillis();
-        log.info("request end, id: {}, cost: {}ms", requestId, totalTimeMillis);
+        log.info("request end, id: {}, path: {}, cost: {}ms", requestId, url, totalTimeMillis);
+
         return result;
     }
 
@@ -83,7 +105,7 @@ public class LogInterceptor {
         String targetType = loggableOperation.targetType();
 
         // 获取用户信息和请求参数
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
         // 获取用户信息
         String userAccount = StpUtil.isLogin() ? StpUtil.getTokenSession().get("UserAccount").toString() : "未登录";
 
@@ -101,6 +123,13 @@ public class LogInterceptor {
         logRecord.setActionType(actionType);
         logRecord.setTargetType(targetType);
         logRecord.setTargetId(getTargetId(targetType, args));
+
+        // 额外的请求相关信息
+        HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        logRecord.setRequestMethod(httpServletRequest.getMethod());
+        logRecord.setRequestPath(httpServletRequest.getRequestURI());
+        logRecord.setRequestIP(httpServletRequest.getRemoteHost());
+        logRecord.setParams(Arrays.toString(args));
 
         logMapper.insert(logRecord);
 
