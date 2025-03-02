@@ -102,7 +102,7 @@ public interface ArticleMapper extends BaseMapper<Article> {
             "WHERE a.articleCategory = #{articleCategory} " +
             "AND a.isDelete = 0 " +
             "AND a.reviewStatus = 1 " +
-            "AND a.createTime >= DATE_SUB(NOW(), INTERVAL 30 DAY) " +  // 只显示过去7天的文章
+            "AND a.createTime >= DATE_SUB(NOW(), INTERVAL 365 DAY) " +  // 只显示过去7天的文章
             "ORDER BY a.viewCount DESC, a.createTime DESC " +
             "LIMIT 20")
     List<ArticleDTO> getHotArticlesByCategory(@Param("articleCategory") int articleCategory);
