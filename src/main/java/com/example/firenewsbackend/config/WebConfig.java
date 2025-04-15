@@ -10,7 +10,8 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:/C:/Users/axelc/Desktop/fireNews-Backend/fireNews-Backend/src/main/resources/static/uploads/");
+                .addResourceLocations("file:/D:/java/FireNewsWeb-backend/src/main/resources/static/uploads/");
+
     }
 }
 

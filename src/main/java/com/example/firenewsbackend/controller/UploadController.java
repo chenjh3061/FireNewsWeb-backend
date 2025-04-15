@@ -91,7 +91,7 @@ public class UploadController {
 
         ApplicationHome applicationHome = new ApplicationHome(this.getClass());
         // 存储路径
-        String pre = applicationHome.getDir().getParentFile().getParentFile().getParentFile().getAbsolutePath() + "\\fireNews-Backend\\src\\main\\resources\\static\\uploads\\";
+        String pre = applicationHome.getDir().getParentFile().getParentFile().getParentFile().getAbsolutePath() + "\\FireNewsWeb-backend\\src\\main\\resources\\static\\uploads\\";
         System.out.println(pre);
         File dir = new File(pre);
         if (!dir.exists()) {

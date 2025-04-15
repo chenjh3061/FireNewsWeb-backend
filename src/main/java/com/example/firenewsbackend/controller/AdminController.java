@@ -60,6 +60,13 @@ public class AdminController {
         return ResultUtils.success(dashboardVO);
     }
 
+    @GetMapping("/resetPassword")
+    public BaseResponse<String> resetPassword(@RequestParam String id){
+        StpUtil.checkRole("admin");
+        adminService.resetPassword(id);
+        return ResultUtils.success("重置成功");
+    }
+
     @GetMapping("/getRecentLog")
     public BaseResponse<List<Log>> getRecentLog(@RequestParam int page, @RequestParam int size){
         StpUtil.checkRole("admin");

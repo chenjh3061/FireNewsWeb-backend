@@ -153,7 +153,6 @@ public class UserService {
         String tokenValue = StpUtil.getTokenValue();
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        String encryptedPassword = encoder.encode(userPassword); // 加密密码
 
         LoginUserVO loginUserVO = new LoginUserVO();
         BeanUtils.copyProperties(user, loginUserVO);

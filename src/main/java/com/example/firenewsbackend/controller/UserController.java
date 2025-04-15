@@ -13,11 +13,14 @@ import com.example.firenewsbackend.model.dto.user.UpdateByUserRequest;
 import com.example.firenewsbackend.model.entity.User;
 import com.example.firenewsbackend.model.vo.LoginUserVO;
 import com.example.firenewsbackend.service.UserService;
+import com.example.firenewsbackend.utils.RSAUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -84,7 +87,7 @@ public class UserController {
      */
     @LoggableOperation(operationName = "用户注册", actionType = "register", targetType = "user")
     @PostMapping("/register")
-    public BaseResponse<User> register(@RequestBody Map<String, String> params){
+    public BaseResponse<User> register(@RequestBody Map<String, String> params) {
         String userAccount = params.get("userAccount");
         String password = params.get("password");
         String checkPassword = params.get("checkPassword");
@@ -92,9 +95,18 @@ public class UserController {
         if (userAccount == null || password == null || checkPassword == null) {
             return (BaseResponse<User>) ResultUtils.error(ErrorCode.PARAMS_ERROR.getCode(), "请求参数错误");
         }
+
+        try {
+            password = RSAUtils.decrypt(password);
+            checkPassword = RSAUtils.decrypt(checkPassword);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+            return (BaseResponse<User>) ResultUtils.error(ErrorCode.PARAMS_ERROR.getCode(), "密码解密失败");
+        }
+
         return ResultUtils.success(userService.register(userAccount, password, checkPassword));
     }
-
     /**
      * 新增用户
      */
@@ -104,18 +116,37 @@ public class UserController {
 //        return ResultUtils.success(user);
 //    }
 
+
+    /**
+     * 获取公钥
+     */
+    @GetMapping("/getPublicKey")
+    public BaseResponse<String> getPublicKey() {
+        return ResultUtils.success(RSAUtils.AES_KEY);
+    }
+
+
     /**
      * 用户登录
      * @param params 用户账户
      */
     @PostMapping("/login")
-    public BaseResponse<LoginUserVO> login(@RequestBody Map<String, String> params) {
+    public BaseResponse<LoginUserVO> login(@RequestBody java.util.Map<String, String> params) throws Exception {
         String userAccount = params.get("userAccount");
         String password = params.get("password");
 
         if (userAccount == null || password == null) {
             return (BaseResponse<LoginUserVO>) ResultUtils.error(ErrorCode.PARAMS_ERROR.getCode(), "请求参数错误");
         }
+        password = RSAUtils.decrypt(password);
+//        try {
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            System.out.println(e.getMessage());
+//            return (BaseResponse<LoginUserVO>) ResultUtils.error(ErrorCode.PARAMS_ERROR.getCode(), "密码解密失败");
+//        }
+
         return ResultUtils.success(userService.login(userAccount, password));
     }
 

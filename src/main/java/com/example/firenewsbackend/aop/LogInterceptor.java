@@ -7,6 +7,7 @@ import com.example.firenewsbackend.model.entity.Article;
 import com.example.firenewsbackend.model.entity.Comments;
 import com.example.firenewsbackend.model.entity.Log;
 import com.example.firenewsbackend.model.entity.User;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -24,10 +26,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Aspect
 @Component
@@ -141,48 +148,119 @@ public class LogInterceptor {
     }
 
     /**
-     * 获取目标ID
+     * 精确获取目标ID
      */
-    private Long getTargetId(String url, Object[] args) {
-        System.out.println("获取目标参数: " + Arrays.toString(args));
-        // 通过URL和参数来获取目标ID（如文章ID、评论ID等）
-        if (url.contains("/article")) {
-            // 如果是新增文章操作，目标ID为文章的ID
-            return (((Article) args[0]).getId());  // 假设args[0]是Article对象
-        } else if (url.contains("/comment")) {
-            // 如果是评论操作，目标ID为评论的ID或文章ID
-            Comments comment = (Comments) args[0];
-            System.out.println(comment.getArticleId());
-            return (comment.getArticleId());  // 假设args[0]是Comments对象，可以根据需要修改
-        } else if (url.contains("/user")) {
-            // 如果是用户操作，目标ID为用户ID
-            User user = (User) args[0];
-            return (user.getId());  // 假设args[0]是User对象，可以根据需要修改
-        } else if (url.contains("/admin")) {
-            return Long.valueOf("admin");
+    private Long getTargetId(String targetType, Object[] args) {
+        try {
+            // 1. 首先尝试从方法参数中直接获取ID
+            for (Object arg : args) {
+                if (arg == null) continue;
+
+                // 处理实体对象
+                if (targetType.equalsIgnoreCase("article") && arg instanceof Article) {
+                    return ((Article) arg).getId();
+                }
+                else if (targetType.equalsIgnoreCase("comment") && arg instanceof Comments) {
+                    return ((Comments) arg).getId();
+                }
+                else if (targetType.equalsIgnoreCase("user") && arg instanceof User) {
+                    return ((User) arg).getId();
+                }
+                // 处理直接传递的ID参数
+                else if (arg instanceof Long) {
+                    return (Long) arg;
+                }
+                else if (arg instanceof String) {
+                    try {
+                        return Long.parseLong((String) arg);
+                    } catch (NumberFormatException ignored) {}
+                }
+            }
+
+            // 2. 尝试从请求参数中获取ID
+            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+
+            // 检查路径变量 (如 /articles/{id})
+            String pathInfo = request.getRequestURI();
+            Matcher matcher = Pattern.compile(".*/(\\d+)$").matcher(pathInfo);
+            if (matcher.find()) {
+                return Long.parseLong(matcher.group(1));
+            }
+
+            // 检查查询参数 (如 ?id=123)
+            String idParam = request.getParameter("id");
+            if (idParam != null && !idParam.isEmpty()) {
+                try {
+                    return Long.parseLong(idParam);
+                } catch (NumberFormatException e) {
+                    log.warn("无法解析ID参数: {}", idParam);
+                }
+            }
+
+            // 3. 最后尝试从请求体中提取ID（针对POST/PATCH请求）
+            if ("POST".equalsIgnoreCase(request.getMethod())
+                    || "PATCH".equalsIgnoreCase(request.getMethod())) {
+                try (InputStream inputStream = request.getInputStream()) {
+                    String body = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+                    if (body.contains("\"id\":")) {
+                        // 简单提取ID - 仅适用于简单JSON
+                        String idStr = body.split("\"id\":")[1].split("[,\\}]")[0].trim();
+                        return Long.parseLong(idStr.replaceAll("\"", ""));
+                    }
+                } catch (Exception e) {
+                    log.warn("解析请求体获取ID失败", e);
+                }
+            }
+
+            log.warn("无法确定目标ID，目标类型: {}", targetType);
+            return null;
+        } catch (Exception e) {
+            log.error("获取目标ID异常", e);
+            return null;
         }
-        return null;
     }
 
     /**
      * 获取目标信息（如文章标题、评论内容等）
      */
     private String getTargetInfo(String targetType, Object[] args) {
-        if (targetType.equals("article") && args[0] instanceof Article) {
-            Article article = (Article) args[0];
-            if (article.getArticleTitle() != null) {
-                return article.getArticleTitle(); // 返回文章标题
-            } else {
-                return article.getId().toString();
+        try {
+            // 遍历所有参数寻找匹配的目标对象
+            for (Object arg : args) {
+                if (arg == null) continue;
+
+                if (targetType.equalsIgnoreCase("article") && arg instanceof Article) {
+                    Article article = (Article) arg;
+                    return article.getArticleTitle() != null ?
+                            article.getArticleTitle() :
+                            "文章ID: " + article.getId();
+                }
+                else if (targetType.equalsIgnoreCase("comment") && arg instanceof Comments) {
+                    Comments comment = (Comments) arg;
+                    return comment.getContent() != null ?
+                            comment.getContent() :
+                            "评论ID: " + comment.getId();
+                }
+                else if (targetType.equalsIgnoreCase("user") && arg instanceof User) {
+                    User user = (User) arg;
+                    return user.getUserName() != null ?
+                            user.getUserName() :
+                            "用户ID: " + user.getId();
+                }
             }
-        } else if (targetType.equals("comment") && args[0] instanceof Comments) {
-            Comments comment = (Comments) args[0];
-            return comment.getContent(); // 返回评论内容
-        } else if (targetType.equals("user") && args[0] instanceof User) {
-            User user = (User) args[0];
-            return user.getUserName(); // 返回用户名
+
+            // 如果没有匹配到特定对象，尝试获取ID参数
+            for (Object arg : args) {
+                if (arg instanceof Long) {
+                    return "ID: " + arg;
+                }
+            }
+
+            return "目标类型: " + targetType;
+        } catch (Exception e) {
+            log.error("获取目标信息失败", e);
+            return "解析失败";
         }
-        return "未知目标";
     }
 
 }

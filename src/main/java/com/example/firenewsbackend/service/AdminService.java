@@ -36,4 +36,8 @@ public class AdminService {
         return null;
     }
 
+    public void resetPassword(String userId) {
+        String password = "123456";
+        adminMapper.resetPassword(userId, password);
+    }
 }
