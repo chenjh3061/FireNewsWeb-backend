@@ -20,6 +20,7 @@ import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
 import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
@@ -128,8 +129,10 @@ public class ArticleService {
      */
     public Article deleteArticle(Integer id){
         StpUtil.checkRole("admin");
-        articleMapper.setIsDelete(id);
-        return null;
+        Article article = articleMapper.selectById(id);
+        article.setIsDelete(1);
+        articleMapper.updateById(article);
+        return article;
     }
 
     /**
@@ -185,6 +188,13 @@ public class ArticleService {
     @Resource
     private JdbcTemplate jdbcTemplate;
 
+    /**
+     * 模糊搜索
+     * @param searchParams
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
     public List<ArticleDTO> searchArticle(String searchParams, int pageNo, int pageSize) {
         try {
             // 使用 Criteria 构建查询条件

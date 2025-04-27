@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/article")
@@ -238,10 +239,12 @@ public class ArticleController {
      */
     @LoggableOperation(operationName = "删除文章", actionType = "delete", targetType = "article")
     @PostMapping("/deleteArticle")
-    public BaseResponse<Article> deleteArticle(Integer id){
+    public BaseResponse<Article> deleteArticle(@RequestBody Map<String, Integer> map) {
+        Integer id = map.get("id");
         StpUtil.checkRole("admin");
         return ResultUtils.success(articleService.deleteArticle(id));
     }
+
 
     /**
      * 记录用户浏览
